@@ -1,4 +1,3 @@
-// Keep your existing setup...
 generator client {
   provider = "prisma-client-js"
 }
@@ -10,11 +9,42 @@ datasource db {
 }
 
 model Content {
-  id        Int      @id @default(autoincrement())
-  text      String
+  id          Int     @id @default(autoincrement())
+  text        String  // "Expert WordPress Developer"
+  subtext     String? // Your Bio
+  location    String? // "Chittagong, Bangladesh"
+  hourlyRate  String? // "$50.00/hr"
+  statNumber  String? // "100%"
+  statLabel   String? // "Job Success"
+  aboutTitle  String?
+  aboutBody   String?
+  imageUrl    String?
+  upworkLink  String?
+  githubLink  String?
 }
 
-// ADD THIS NEW MODEL:
+model Project {
+  id          Int     @id @default(autoincrement())
+  title       String
+  description String
+  link        String?
+  techStack   String?
+}
+
+// NEW: Store your skills (WordPress, Shopify, etc.)
+model Skill {
+  id   Int    @id @default(autoincrement())
+  name String
+}
+
+// NEW: Store your client reviews
+model Testimonial {
+  id      Int    @id @default(autoincrement())
+  client  String // e.g. "Changing primary domain..."
+  review  String
+  rating  String // "5.0"
+}
+
 model Admin {
   id       Int    @id @default(autoincrement())
   username String @unique

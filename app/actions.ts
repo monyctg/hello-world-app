@@ -35,26 +35,102 @@ export async function logout() {
   redirect("/login");
 }
 
-// 3. UPDATE TEXT ACTION
+// 3. UPDATE TEXT ACTION (Updated)
+
 export async function updateText(formData: FormData) {
-  // FIX: Await cookies() here
   const cookieStore = await cookies();
 
   if (!cookieStore.has("admin_session")) {
     throw new Error("Unauthorized");
   }
 
+  // Get data
   const newText = formData.get("newText") as string;
+  const subtext = formData.get("subtext") as string;
+  const statNumber = formData.get("statNumber") as string;
+  const statLabel = formData.get("statLabel") as string;
+  const aboutTitle = formData.get("aboutTitle") as string;
+  const aboutBody = formData.get("aboutBody") as string;
+  const imageUrl = formData.get("imageUrl") as string; // <-- GET IMAGE
 
   const firstRecord = await prisma.content.findFirst();
+
   if (firstRecord) {
     await prisma.content.update({
       where: { id: firstRecord.id },
-      data: { text: newText },
+      data: {
+        text: newText,
+        subtext,
+        statNumber,
+        statLabel,
+        aboutTitle,
+        aboutBody,
+        imageUrl, // <-- SAVE IMAGE
+      },
     });
   } else {
-    await prisma.content.create({ data: { text: newText } });
+    await prisma.content.create({
+      data: {
+        text: newText,
+        subtext,
+        statNumber,
+        statLabel,
+        aboutTitle,
+        aboutBody,
+        imageUrl,
+      },
+    });
   }
 
   revalidatePath("/");
+}
+
+// 6. SKILLS ACTIONS
+export async function addSkill(formData: FormData) {
+  const cookieStore = await cookies();
+  if (!cookieStore.has("admin_session")) throw new Error("Unauthorized");
+
+  await prisma.skill.create({
+    data: { name: formData.get("name") as string },
+  });
+  revalidatePath("/");
+  revalidatePath("/dashboard");
+}
+
+export async function deleteSkill(formData: FormData) {
+  const cookieStore = await cookies();
+  if (!cookieStore.has("admin_session")) throw new Error("Unauthorized");
+
+  await prisma.skill.delete({
+    where: { id: parseInt(formData.get("id") as string) },
+  });
+  revalidatePath("/");
+  revalidatePath("/dashboard");
+}
+
+// 7. TESTIMONIAL ACTIONS
+export async function addTestimonial(formData: FormData) {
+  const cookieStore = await cookies();
+  if (!cookieStore.has("admin_session")) throw new Error("Unauthorized");
+
+  await prisma.testimonial.create({
+    data: {
+      client: formData.get("client") as string,
+      review: formData.get("review") as string,
+      rating: formData.get("rating") as string,
+    },
+  });
+  revalidatePath("/");
+  revalidatePath("/dashboard");
+}
+
+export async function deleteTestimonial(formData: FormData) {
+  const cookieStore = await cookies();
+  if (!cookieStore.has("admin_session")) throw new Error("Unauthorized");
+
+  await prisma.testimonial.delete({
+    where: { id: parseInt(formData.get("id") as string) },
+  });
+  revalidatePath("/");
+  revalidatePath("/dashboard");
 }
