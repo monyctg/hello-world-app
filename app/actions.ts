@@ -1,40 +1,60 @@
 "use server";
 
 import { prisma } from "@/lib/prisma";
-import { revalidatePath } from "next/cache";
+import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
+import { revalidatePath } from "next/cache";
 
+// 1. LOGIN ACTION
+export async function login(formData: FormData) {
+  const username = formData.get("username") as string;
+  const password = formData.get("password") as string;
+
+  const admin = await prisma.admin.findUnique({
+    where: { username: username },
+  });
+
+  if (!admin || admin.password !== password) {
+    throw new Error("Invalid username or password");
+  }
+
+  const oneDay = 24 * 60 * 60 * 1000;
+
+  // FIX: Await cookies() here
+  (await cookies()).set("admin_session", "true", {
+    expires: Date.now() + oneDay,
+  });
+
+  redirect("/dashboard");
+}
+
+// 2. LOGOUT ACTION
+export async function logout() {
+  // FIX: Await cookies() here
+  (await cookies()).delete("admin_session");
+  redirect("/login");
+}
+
+// 3. UPDATE TEXT ACTION
 export async function updateText(formData: FormData) {
-  // 1. Get data safely
-  const password = formData.get("password");
-  const newText = formData.get("newText");
+  // FIX: Await cookies() here
+  const cookieStore = await cookies();
 
-  // 2. Validate data types (TypeScript fix)
-  if (typeof password !== "string" || typeof newText !== "string") {
-    throw new Error("Invalid input");
+  if (!cookieStore.has("admin_session")) {
+    throw new Error("Unauthorized");
   }
 
-  // 3. Check password
-  if (password !== "1234") {
-    throw new Error("Wrong password!");
-  }
+  const newText = formData.get("newText") as string;
 
-  // 4. Find record
   const firstRecord = await prisma.content.findFirst();
-
-  // 5. Update or Create
   if (firstRecord) {
     await prisma.content.update({
       where: { id: firstRecord.id },
       data: { text: newText },
     });
   } else {
-    await prisma.content.create({
-      data: { text: newText },
-    });
+    await prisma.content.create({ data: { text: newText } });
   }
 
-  // 6. Refresh and Redirect
   revalidatePath("/");
-  redirect("/");
 }

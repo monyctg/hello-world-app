@@ -1,3 +1,4 @@
+// Keep your existing setup...
 generator client {
   provider = "prisma-client-js"
 }
@@ -11,4 +12,11 @@ datasource db {
 model Content {
   id        Int      @id @default(autoincrement())
   text      String
+}
+
+// ADD THIS NEW MODEL:
+model Admin {
+  id       Int    @id @default(autoincrement())
+  username String @unique
+  password String
 }
