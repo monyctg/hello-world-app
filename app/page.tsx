@@ -8,7 +8,7 @@ export default function Home() {
         height: "100vh",
       }}
     >
-      <h1>Hello World</h1>
+      <h1>Hi, I&apos;m Magfar</h1>
     </div>
   );
 }
