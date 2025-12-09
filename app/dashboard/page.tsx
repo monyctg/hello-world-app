@@ -1,142 +1,166 @@
 import { prisma } from "@/lib/prisma";
-import {
-  updateText,
-  addProject,
-  deleteProject,
-  addSkill,
-  deleteSkill,
-  addTestimonial,
-  deleteTestimonial,
-} from "../actions";
+import { updateText, addProject, deleteProject } from "../actions";
 
 export default async function Dashboard() {
   const content = await prisma.content.findFirst();
-  const skills = await prisma.skill.findMany();
-  const testimonials = await prisma.testimonial.findMany();
+  const projects = await prisma.project.findMany({ orderBy: { id: "desc" } });
 
   return (
-    <div className="max-w-4xl mx-auto pb-20 p-6">
-      <h1 className="text-3xl font-bold mb-8">Upwork Portfolio Manager</h1>
+    <div className="max-w-5xl mx-auto pb-20">
+      <h1 className="text-4xl font-bold mb-10 border-b pb-4">
+        Portfolio Manager
+      </h1>
 
-      {/* 1. PROFILE DETAILS */}
-      <section className="bg-white p-6 rounded shadow mb-8">
-        <h2 className="font-bold text-xl mb-4 text-blue-600">
-          Profile Details
-        </h2>
-        <form
-          action={updateText}
-          className="grid grid-cols-1 md:grid-cols-2 gap-4"
-        >
+      {/* PART 1: MAIN CONTENT FORM */}
+      <form
+        action={updateText}
+        className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-16"
+      >
+        {/* Hero Section */}
+        <div className="bg-white p-6 rounded shadow border-t-4 border-blue-500">
+          <h2 className="font-bold text-xl mb-4">Hero Section</h2>
+          <div className="flex flex-col gap-3">
+            <input
+              name="newText"
+              defaultValue={content?.text}
+              className="p-2 border rounded"
+              placeholder="Main Title"
+            />
+            <input
+              name="subtext"
+              defaultValue={content?.subtext || ""}
+              className="p-2 border rounded"
+              placeholder="Subtitle"
+            />
+            <input
+              name="imageUrl"
+              defaultValue={content?.imageUrl || ""}
+              className="p-2 border rounded"
+              placeholder="/me.jpg"
+            />
+          </div>
+        </div>
+
+        {/* Links Section */}
+        <div className="bg-white p-6 rounded shadow border-t-4 border-green-500">
+          <h2 className="font-bold text-xl mb-4">Social Links</h2>
+          <div className="flex flex-col gap-3">
+            <input
+              name="upworkLink"
+              defaultValue={content?.upworkLink || ""}
+              className="p-2 border rounded"
+              placeholder="Upwork Profile URL"
+            />
+            <input
+              name="githubLink"
+              defaultValue={content?.githubLink || ""}
+              className="p-2 border rounded"
+              placeholder="GitHub Profile URL"
+            />
+          </div>
+        </div>
+
+        {/* Stats Section */}
+        <div className="bg-white p-6 rounded shadow border-t-4 border-yellow-500">
+          <h2 className="font-bold text-xl mb-4">Stats</h2>
+          <div className="flex gap-3">
+            <input
+              name="statNumber"
+              defaultValue={content?.statNumber || ""}
+              className="w-1/2 p-2 border rounded"
+              placeholder="100%"
+            />
+            <input
+              name="statLabel"
+              defaultValue={content?.statLabel || ""}
+              className="w-1/2 p-2 border rounded"
+              placeholder="Success Rate"
+            />
+          </div>
+        </div>
+
+        {/* About Section */}
+        <div className="bg-white p-6 rounded shadow border-t-4 border-purple-500 md:col-span-2">
+          <h2 className="font-bold text-xl mb-4">About Me</h2>
           <input
-            name="newText"
-            defaultValue={content?.text}
-            placeholder="Title (Expert WordPress Developer)"
-            className="p-2 border rounded"
-          />
-          <input
-            name="location"
-            defaultValue={content?.location || ""}
-            placeholder="Location"
-            className="p-2 border rounded"
-          />
-          <input
-            name="hourlyRate"
-            defaultValue={content?.hourlyRate || ""}
-            placeholder="Hourly Rate"
-            className="p-2 border rounded"
-          />
-          <input
-            name="statNumber"
-            defaultValue={content?.statNumber || ""}
-            placeholder="JSS (100%)"
-            className="p-2 border rounded"
-          />
-          <input
-            name="upworkLink"
-            defaultValue={content?.upworkLink || ""}
-            placeholder="Upwork URL"
-            className="p-2 border rounded md:col-span-2"
+            name="aboutTitle"
+            defaultValue={content?.aboutTitle || ""}
+            className="w-full p-2 border rounded mb-2"
+            placeholder="Title"
           />
           <textarea
-            name="subtext"
-            defaultValue={content?.subtext || ""}
-            placeholder="Bio"
-            className="p-2 border rounded md:col-span-2 h-24"
+            name="aboutBody"
+            defaultValue={content?.aboutBody || ""}
+            className="w-full p-2 border rounded h-32"
+            placeholder="Description"
           />
-          <button className="bg-black text-white py-2 rounded md:col-span-2">
-            Save Profile
-          </button>
-        </form>
-      </section>
-
-      {/* 2. SKILLS */}
-      <section className="bg-white p-6 rounded shadow mb-8">
-        <h2 className="font-bold text-xl mb-4 text-green-600">Skills</h2>
-        <div className="flex flex-wrap gap-2 mb-4">
-          {skills.map((skill) => (
-            <form
-              key={skill.id}
-              action={deleteSkill}
-              className="bg-gray-200 px-3 py-1 rounded flex items-center gap-2"
-            >
-              <span>{skill.name}</span>
-              <input type="hidden" name="id" value={skill.id} />
-              <button className="text-red-500 font-bold">×</button>
-            </form>
-          ))}
         </div>
-        <form action={addSkill} className="flex gap-2">
-          <input
-            name="name"
-            placeholder="Add Skill (e.g. WordPress)"
-            className="p-2 border rounded w-full"
-            required
-          />
-          <button className="bg-green-600 text-white px-4 rounded">Add</button>
-        </form>
-      </section>
 
-      {/* 3. TESTIMONIALS */}
-      <section className="bg-white p-6 rounded shadow mb-8">
-        <h2 className="font-bold text-xl mb-4 text-yellow-600">Testimonials</h2>
-        <div className="grid gap-4 mb-4">
-          {testimonials.map((t) => (
-            <div key={t.id} className="border p-3 rounded flex justify-between">
+        <button className="md:col-span-2 bg-black text-white py-3 rounded font-bold hover:bg-gray-800">
+          Save General Settings
+        </button>
+      </form>
+
+      {/* PART 2: PROJECTS MANAGER */}
+      <div className="border-t pt-10">
+        <h2 className="text-3xl font-bold mb-6">My Projects</h2>
+
+        {/* Add Project Form */}
+        <div className="bg-gray-100 p-6 rounded mb-8">
+          <h3 className="font-bold mb-4">Add New Project</h3>
+          <form action={addProject} className="flex flex-col gap-3">
+            <input
+              name="title"
+              placeholder="Project Title (e.g. E-commerce App)"
+              className="p-2 border rounded"
+              required
+            />
+            <input
+              name="description"
+              placeholder="Short description..."
+              className="p-2 border rounded"
+              required
+            />
+            <input
+              name="techStack"
+              placeholder="Tech Used (e.g. Next.js, Stripe)"
+              className="p-2 border rounded"
+            />
+            <input
+              name="link"
+              placeholder="Project URL"
+              className="p-2 border rounded"
+            />
+            <button className="bg-blue-600 text-white py-2 rounded font-bold w-40">
+              Add Project
+            </button>
+          </form>
+        </div>
+
+        {/* List of Existing Projects */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {projects.map((project) => (
+            <div
+              key={project.id}
+              className="bg-white p-4 rounded shadow flex justify-between items-start border"
+            >
               <div>
-                <p className="font-bold">{t.client}</p>
-                <p className="text-sm text-gray-600">"{t.review}"</p>
-                <p className="text-yellow-600 text-sm">★ {t.rating}</p>
+                <h4 className="font-bold text-lg">{project.title}</h4>
+                <p className="text-gray-600 text-sm">{project.description}</p>
+                <p className="text-blue-500 text-xs mt-1">
+                  {project.techStack}
+                </p>
               </div>
-              <form action={deleteTestimonial}>
-                <input type="hidden" name="id" value={t.id} />
-                <button className="text-red-500">Delete</button>
+              <form action={deleteProject}>
+                <input type="hidden" name="id" value={project.id} />
+                <button className="text-red-500 text-sm hover:underline">
+                  Delete
+                </button>
               </form>
             </div>
           ))}
         </div>
-        <form action={addTestimonial} className="flex flex-col gap-2">
-          <input
-            name="client"
-            placeholder="Project Name / Client"
-            className="p-2 border rounded"
-            required
-          />
-          <textarea
-            name="review"
-            placeholder="Review text..."
-            className="p-2 border rounded"
-            required
-          />
-          <input
-            name="rating"
-            placeholder="Rating (5.0)"
-            className="p-2 border rounded"
-          />
-          <button className="bg-yellow-600 text-white py-2 rounded">
-            Add Review
-          </button>
-        </form>
-      </section>
+      </div>
     </div>
   );
 }

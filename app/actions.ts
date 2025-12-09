@@ -51,6 +51,8 @@ export async function updateText(formData: FormData) {
   const statLabel = formData.get("statLabel") as string;
   const aboutTitle = formData.get("aboutTitle") as string;
   const aboutBody = formData.get("aboutBody") as string;
+  const upworkLink = formData.get("upworkLink") as string;
+  const githubLink = formData.get("githubLink") as string;
   const imageUrl = formData.get("imageUrl") as string; // <-- GET IMAGE
 
   const firstRecord = await prisma.content.findFirst();
@@ -66,6 +68,8 @@ export async function updateText(formData: FormData) {
         aboutTitle,
         aboutBody,
         imageUrl, // <-- SAVE IMAGE
+        upworkLink,
+        githubLink,
       },
     });
   } else {
@@ -85,6 +89,38 @@ export async function updateText(formData: FormData) {
   revalidatePath("/");
 }
 
+// 4. ADD PROJECT ACTION
+export async function addProject(formData: FormData) {
+  const cookieStore = await cookies();
+  if (!cookieStore.has("admin_session")) throw new Error("Unauthorized");
+
+  await prisma.project.create({
+    data: {
+      title: formData.get("title") as string,
+      description: formData.get("description") as string,
+      link: formData.get("link") as string,
+      techStack: formData.get("techStack") as string,
+    },
+  });
+
+  revalidatePath("/");
+  revalidatePath("/dashboard");
+}
+
+// 5. DELETE PROJECT ACTION
+export async function deleteProject(formData: FormData) {
+  const cookieStore = await cookies();
+  if (!cookieStore.has("admin_session")) throw new Error("Unauthorized");
+
+  const projectId = parseInt(formData.get("id") as string);
+
+  await prisma.project.delete({
+    where: { id: projectId },
+  });
+
+  revalidatePath("/");
+  revalidatePath("/dashboard");
+}
 // 6. SKILLS ACTIONS
 export async function addSkill(formData: FormData) {
   const cookieStore = await cookies();
