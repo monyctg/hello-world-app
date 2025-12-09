@@ -1,166 +1,212 @@
 import { prisma } from "@/lib/prisma";
-import { updateText, addProject, deleteProject } from "../actions";
+import { updateText } from "../actions";
 
-export default async function Dashboard() {
+export default async function DashboardProfile() {
   const content = await prisma.content.findFirst();
-  const projects = await prisma.project.findMany({ orderBy: { id: "desc" } });
 
   return (
-    <div className="max-w-5xl mx-auto pb-20">
-      <h1 className="text-4xl font-bold mb-10 border-b pb-4">
-        Portfolio Manager
-      </h1>
-
-      {/* PART 1: MAIN CONTENT FORM */}
-      <form
-        action={updateText}
-        className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-16"
-      >
-        {/* Hero Section */}
-        <div className="bg-white p-6 rounded shadow border-t-4 border-blue-500">
-          <h2 className="font-bold text-xl mb-4">Hero Section</h2>
-          <div className="flex flex-col gap-3">
-            <input
-              name="newText"
-              defaultValue={content?.text}
-              className="p-2 border rounded"
-              placeholder="Main Title"
-            />
-            <input
-              name="subtext"
-              defaultValue={content?.subtext || ""}
-              className="p-2 border rounded"
-              placeholder="Subtitle"
-            />
-            <input
-              name="imageUrl"
-              defaultValue={content?.imageUrl || ""}
-              className="p-2 border rounded"
-              placeholder="/me.jpg"
-            />
-          </div>
+    <div className="max-w-6xl mx-auto p-8 pb-24 font-sans text-gray-800">
+      {/* HEADER */}
+      <div className="flex items-center justify-between mb-10">
+        <div>
+          <h1 className="text-3xl font-bold text-gray-900">Profile Settings</h1>
+          <p className="text-gray-500 mt-1">
+            Manage your homepage content and personal details.
+          </p>
         </div>
-
-        {/* Links Section */}
-        <div className="bg-white p-6 rounded shadow border-t-4 border-green-500">
-          <h2 className="font-bold text-xl mb-4">Social Links</h2>
-          <div className="flex flex-col gap-3">
-            <input
-              name="upworkLink"
-              defaultValue={content?.upworkLink || ""}
-              className="p-2 border rounded"
-              placeholder="Upwork Profile URL"
-            />
-            <input
-              name="githubLink"
-              defaultValue={content?.githubLink || ""}
-              className="p-2 border rounded"
-              placeholder="GitHub Profile URL"
-            />
-          </div>
-        </div>
-
-        {/* Stats Section */}
-        <div className="bg-white p-6 rounded shadow border-t-4 border-yellow-500">
-          <h2 className="font-bold text-xl mb-4">Stats</h2>
-          <div className="flex gap-3">
-            <input
-              name="statNumber"
-              defaultValue={content?.statNumber || ""}
-              className="w-1/2 p-2 border rounded"
-              placeholder="100%"
-            />
-            <input
-              name="statLabel"
-              defaultValue={content?.statLabel || ""}
-              className="w-1/2 p-2 border rounded"
-              placeholder="Success Rate"
-            />
-          </div>
-        </div>
-
-        {/* About Section */}
-        <div className="bg-white p-6 rounded shadow border-t-4 border-purple-500 md:col-span-2">
-          <h2 className="font-bold text-xl mb-4">About Me</h2>
-          <input
-            name="aboutTitle"
-            defaultValue={content?.aboutTitle || ""}
-            className="w-full p-2 border rounded mb-2"
-            placeholder="Title"
-          />
-          <textarea
-            name="aboutBody"
-            defaultValue={content?.aboutBody || ""}
-            className="w-full p-2 border rounded h-32"
-            placeholder="Description"
-          />
-        </div>
-
-        <button className="md:col-span-2 bg-black text-white py-3 rounded font-bold hover:bg-gray-800">
-          Save General Settings
-        </button>
-      </form>
-
-      {/* PART 2: PROJECTS MANAGER */}
-      <div className="border-t pt-10">
-        <h2 className="text-3xl font-bold mb-6">My Projects</h2>
-
-        {/* Add Project Form */}
-        <div className="bg-gray-100 p-6 rounded mb-8">
-          <h3 className="font-bold mb-4">Add New Project</h3>
-          <form action={addProject} className="flex flex-col gap-3">
-            <input
-              name="title"
-              placeholder="Project Title (e.g. E-commerce App)"
-              className="p-2 border rounded"
-              required
-            />
-            <input
-              name="description"
-              placeholder="Short description..."
-              className="p-2 border rounded"
-              required
-            />
-            <input
-              name="techStack"
-              placeholder="Tech Used (e.g. Next.js, Stripe)"
-              className="p-2 border rounded"
-            />
-            <input
-              name="link"
-              placeholder="Project URL"
-              className="p-2 border rounded"
-            />
-            <button className="bg-blue-600 text-white py-2 rounded font-bold w-40">
-              Add Project
-            </button>
-          </form>
-        </div>
-
-        {/* List of Existing Projects */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {projects.map((project) => (
-            <div
-              key={project.id}
-              className="bg-white p-4 rounded shadow flex justify-between items-start border"
-            >
-              <div>
-                <h4 className="font-bold text-lg">{project.title}</h4>
-                <p className="text-gray-600 text-sm">{project.description}</p>
-                <p className="text-blue-500 text-xs mt-1">
-                  {project.techStack}
-                </p>
-              </div>
-              <form action={deleteProject}>
-                <input type="hidden" name="id" value={project.id} />
-                <button className="text-red-500 text-sm hover:underline">
-                  Delete
-                </button>
-              </form>
-            </div>
-          ))}
+        <div className="bg-green-100 text-green-800 px-4 py-2 rounded-full text-sm font-bold border border-green-200">
+          Admin Mode
         </div>
       </div>
+
+      <form
+        action={updateText}
+        className="grid grid-cols-1 lg:grid-cols-3 gap-8"
+      >
+        {/* --- LEFT COLUMN: VISUALS --- */}
+        <div className="lg:col-span-1 space-y-6">
+          {/* PHOTO CARD */}
+          <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-200">
+            <h2 className="font-bold text-lg mb-4 text-gray-800">
+              Profile Photo
+            </h2>
+
+            {/* Image Preview */}
+            <div className="aspect-square w-full rounded-xl bg-gray-100 border-2 border-dashed border-gray-300 flex items-center justify-center mb-4 overflow-hidden relative group">
+              <img
+                src={content?.imageUrl || "/me.png"}
+                alt="Preview"
+                className="w-full h-full object-cover"
+              />
+              <div className="absolute inset-0 bg-black/50 flex items-center justify-center text-white opacity-0 group-hover:opacity-100 transition-opacity">
+                Preview
+              </div>
+            </div>
+
+            {/* Input */}
+            <div className="space-y-2">
+              <label className="text-xs font-bold uppercase text-gray-500">
+                Image Path
+              </label>
+              <input
+                name="imageUrl"
+                defaultValue={content?.imageUrl || "/me.png"}
+                className="w-full p-3 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none transition"
+                placeholder="/me.png"
+              />
+              <p className="text-[11px] text-gray-400 leading-tight">
+                Upload <strong>me.png</strong> to your project's{" "}
+                <strong>public</strong> folder and type <strong>/me.png</strong>{" "}
+                above.
+              </p>
+            </div>
+          </div>
+
+          {/* QUICK LINKS CARD */}
+          <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-200">
+            <h2 className="font-bold text-lg mb-4 text-gray-800">
+              External Links
+            </h2>
+            <div className="space-y-4">
+              <div>
+                <label className="text-xs font-bold uppercase text-gray-500">
+                  Upwork Profile URL
+                </label>
+                <input
+                  name="upworkLink"
+                  defaultValue={content?.upworkLink || ""}
+                  className="w-full p-3 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+                  placeholder="https://upwork.com/..."
+                />
+              </div>
+              <div>
+                <label className="text-xs font-bold uppercase text-gray-500">
+                  GitHub Profile URL
+                </label>
+                <input
+                  name="githubLink"
+                  defaultValue={content?.githubLink || ""}
+                  className="w-full p-3 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+                  placeholder="https://github.com/..."
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* --- RIGHT COLUMN: CONTENT --- */}
+        <div className="lg:col-span-2 space-y-6">
+          {/* HERO INFO */}
+          <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-200">
+            <h2 className="font-bold text-lg mb-4 text-gray-800 border-b pb-2">
+              Hero Section
+            </h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="md:col-span-2">
+                <label className="text-xs font-bold uppercase text-gray-500">
+                  Main Headline
+                </label>
+                <input
+                  name="newText"
+                  defaultValue={content?.text}
+                  className="w-full p-3 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none font-bold text-lg"
+                />
+              </div>
+
+              <div className="md:col-span-2">
+                <label className="text-xs font-bold uppercase text-gray-500">
+                  Subtitle / Bio
+                </label>
+                <textarea
+                  name="subtext"
+                  defaultValue={content?.subtext || ""}
+                  className="w-full p-3 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none h-24"
+                />
+              </div>
+
+              <div>
+                <label className="text-xs font-bold uppercase text-gray-500">
+                  Location
+                </label>
+                <input
+                  name="location"
+                  defaultValue={content?.location || ""}
+                  className="w-full p-3 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+                />
+              </div>
+
+              <div>
+                <label className="text-xs font-bold uppercase text-gray-500">
+                  Hourly Rate
+                </label>
+                <input
+                  name="hourlyRate"
+                  defaultValue={content?.hourlyRate || ""}
+                  className="w-full p-3 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+                />
+              </div>
+
+              <div>
+                <label className="text-xs font-bold uppercase text-gray-500">
+                  Stat Value (e.g. 100%)
+                </label>
+                <input
+                  name="statNumber"
+                  defaultValue={content?.statNumber || ""}
+                  className="w-full p-3 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+                />
+              </div>
+
+              <div>
+                <label className="text-xs font-bold uppercase text-gray-500">
+                  Stat Label
+                </label>
+                <input
+                  name="statLabel"
+                  defaultValue={content?.statLabel || ""}
+                  className="w-full p-3 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* ABOUT INFO */}
+          <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-200">
+            <h2 className="font-bold text-lg mb-4 text-gray-800 border-b pb-2">
+              About Section
+            </h2>
+            <div className="space-y-4">
+              <div>
+                <label className="text-xs font-bold uppercase text-gray-500">
+                  Section Title
+                </label>
+                <input
+                  name="aboutTitle"
+                  defaultValue={content?.aboutTitle || ""}
+                  className="w-full p-3 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+                />
+              </div>
+              <div>
+                <label className="text-xs font-bold uppercase text-gray-500">
+                  Full Description
+                </label>
+                <textarea
+                  name="aboutBody"
+                  defaultValue={content?.aboutBody || ""}
+                  className="w-full p-3 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none h-40"
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* SUBMIT */}
+          <div className="sticky bottom-6">
+            <button className="w-full bg-black text-white py-4 rounded-xl font-bold text-lg shadow-xl hover:bg-gray-800 hover:scale-[1.01] transition-all">
+              Save All Changes
+            </button>
+          </div>
+        </div>
+      </form>
     </div>
   );
 }
