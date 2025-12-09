@@ -5,34 +5,36 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
 export async function updateText(formData: FormData) {
-  // 1. Get the data from the form
-  const password = formData.get("password") as string;
-  const newText = formData.get("newText") as string;
+  // 1. Get data safely
+  const password = formData.get("password");
+  const newText = formData.get("newText");
 
-  // 2. Check the secret password (Change '1234' to whatever you want)
+  // 2. Validate data types (TypeScript fix)
+  if (typeof password !== "string" || typeof newText !== "string") {
+    throw new Error("Invalid input");
+  }
+
+  // 3. Check password
   if (password !== "1234") {
     throw new Error("Wrong password!");
   }
 
-  // 3. Find the first record in the database
+  // 4. Find record
   const firstRecord = await prisma.content.findFirst();
 
+  // 5. Update or Create
   if (firstRecord) {
-    // 4. Update it
     await prisma.content.update({
       where: { id: firstRecord.id },
       data: { text: newText },
     });
   } else {
-    // (Optional) Create if it doesn't exist
     await prisma.content.create({
       data: { text: newText },
     });
   }
 
-  // 5. Refresh the home page so the new text shows up immediately
+  // 6. Refresh and Redirect
   revalidatePath("/");
-
-  // 6. Redirect back to home
   redirect("/");
 }
