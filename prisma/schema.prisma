@@ -10,15 +10,15 @@ datasource db {
 
 model Content {
   id          Int     @id @default(autoincrement())
-  text        String  // "Expert WordPress Developer"
-  subtext     String? // Your Bio
-  location    String? // "Chittagong, Bangladesh"
-  hourlyRate  String? // "$50.00/hr"
-  statNumber  String? // "100%"
-  statLabel   String? // "Job Success"
+  text        String
+  subtext     String?
+  location    String?
+  hourlyRate  String?
+  statNumber  String?
+  statLabel   String? // e.g. "Job Success"
   aboutTitle  String?
   aboutBody   String?
-  imageUrl    String?
+  imageUrl    String? // e.g. "/me.png"
   upworkLink  String?
   githubLink  String?
 }
@@ -31,18 +31,16 @@ model Project {
   techStack   String?
 }
 
-// NEW: Store your skills (WordPress, Shopify, etc.)
 model Skill {
   id   Int    @id @default(autoincrement())
   name String
 }
 
-// NEW: Store your client reviews
 model Testimonial {
   id      Int    @id @default(autoincrement())
-  client  String // e.g. "Changing primary domain..."
+  client  String
   review  String
-  rating  String // "5.0"
+  rating  String
 }
 
 model Admin {
