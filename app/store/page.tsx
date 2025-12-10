@@ -2,7 +2,7 @@ import { prisma } from '@/lib/prisma';
 import Link from 'next/link';
 import type { Metadata } from 'next';
 import AddToCartBtn from '../components/AddToCartBtn'; // We will create this
-import CartDrawer from '../components/CartDrawer';     // We will create this
+import CartDrawer from '../components/CartDrawer';     // We will create this 
 
 export const metadata: Metadata = {
   title: 'Store | Premium WordPress Plugins by Magfar',

@@ -49,20 +49,16 @@ model Admin {
   password String
 }
 
-
 model Product {
   id          Int      @id @default(autoincrement())
   title       String
-  slug        String   @unique // SEO friendly URL (e.g. /store/my-plugin)
+  slug        String   @unique
   description String
-  features    String?  // HTML or markdown for features
+  features    String?
   imageUrl    String?
   price       Decimal  @db.Decimal(10, 2)
   demoLink    String?
   createdAt   DateTime @default(now())
-  
-  // Simple variations stored as JSON string for now to keep it simple
-  // e.g. [{"name": "Single Site", "price": 49}, {"name": "Unlimited", "price": 199}]
   variations  String?  
 }
 
@@ -71,7 +67,6 @@ model Order {
   customerName String
   email       String
   total       Decimal
-  status      String   @default("pending") // pending, paid
+  status      String   @default("pending")
   createdAt   DateTime @default(now())
-  // In a real app, you would link this to specific products
 }
