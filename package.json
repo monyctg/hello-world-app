@@ -10,6 +10,7 @@
     "postinstall": "prisma generate"
   },
   "dependencies": {
+    "@paypal/react-paypal-js": "^8.9.2",
     "geist": "^1.5.1",
     "lucide-react": "^0.559.0",
     "next": "16.0.8",

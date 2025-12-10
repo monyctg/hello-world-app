@@ -33,28 +33,6 @@ export default async function Home() {
       </div>
 
       {/* --- 1. GLASS HEADER --- */}
-      <header className="fixed top-0 w-full z-50 border-b border-white/5 bg-[#050505]/80 backdrop-blur-xl">
-        <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
-          <div className="text-2xl font-bold tracking-tighter">
-            magfar<span className="text-[#14a800]">.</span>
-          </div>
-          
-          <nav className="hidden md:flex items-center gap-8 text-sm font-medium text-gray-400">
-            <a href="#work" className="hover:text-white transition-colors">Work</a>
-            <Link href="/store" className="hover:text-white transition-colors text-[#14a800] font-bold">Store</Link>
-            <a href="#skills" className="hover:text-white transition-colors">Expertise</a>
-            <a href="#testimonials" className="hover:text-white transition-colors">Reviews</a>
-          </nav>
-
-          <a 
-            href={content?.upworkLink || "#"} 
-            target="_blank"
-            className="bg-[#14a800] hover:bg-[#118f00] text-white px-6 py-2.5 rounded-full font-bold text-sm transition-all transform hover:scale-105 shadow-[0_0_20px_rgba(20,168,0,0.3)]"
-          >
-            Hire Me
-          </a>
-        </div>
-      </header>
 
       {/* --- 2. HERO SECTION --- */}
       <section className="relative z-10 pt-44 pb-24 px-6">
@@ -213,16 +191,6 @@ export default async function Home() {
       </section>
 
       {/* --- FOOTER --- */}
-      <footer className="py-12 border-t border-white/10 bg-[#050505] text-center">
-        <div className="flex justify-center gap-8 mb-8 text-sm font-bold text-gray-400">
-           <a href={content?.upworkLink || "#"} className="hover:text-[#14a800]">Upwork</a>
-           <a href={content?.githubLink || "#"} className="hover:text-white">GitHub</a>
-           <Link href="/dashboard" className="hover:text-white">Admin</Link>
-        </div>
-        <p className="text-gray-600 text-xs uppercase tracking-widest">
-          &copy; {new Date().getFullYear()} <a href="/">Magfar</a>. All rights reserved.
-        </p>
-      </footer>
 
     </main>
   );

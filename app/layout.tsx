@@ -4,6 +4,9 @@ import { Suspense } from "react";
 import "./globals.css";
 import WhatsAppBtn from "./components/WhatsAppBtn";
 import ToastProvider from "./components/ToastProvider";
+// Import new components
+import Header from "./components/Header";
+import Footer from "./components/Footer";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -20,14 +23,19 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className} suppressHydrationWarning={true}>
+        
+        {/* GLOBAL HEADER */}
+        <Header />
+
         {children}
         
-        <WhatsAppBtn />
+        {/* GLOBAL FOOTER */}
+        <Footer />
         
+        <WhatsAppBtn />
         <Suspense fallback={null}>
           <ToastProvider />
         </Suspense>
-        
       </body>
     </html>
   );
