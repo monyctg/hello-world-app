@@ -1,19 +1,10 @@
 import type { Metadata } from "next";
-import localFont from "next/font/local";
+import { Inter } from "next/font/google"; // 1. Import Google Font
 import "./globals.css";
-// 1. IMPORT THE BUTTON  
 import WhatsAppBtn from "./components/WhatsAppBtn";
 
-const geistSans = localFont({
-  src: "./fonts/GeistVF.woff",
-  variable: "--font-geist-sans",
-  weight: "100 900",
-});
-const geistMono = localFont({
-  src: "./fonts/GeistMonoVF.woff",
-  variable: "--font-geist-mono",
-  weight: "100 900",
-});
+// 2. Configure the font
+const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "Magfar - Full Stack Developer",
@@ -29,13 +20,10 @@ export default function RootLayout({
     <html lang="en">
       <body
         suppressHydrationWarning={true}
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={inter.className} // 3. Apply the font class here
       >
         {children}
-        
-        {/* 2. PLACE IT HERE */}
         <WhatsAppBtn />
-        
       </body>
     </html>
   );
