@@ -132,7 +132,7 @@ export default function CheckoutPage() {
               {/* PAYPAL BUTTONS */}
               {formData.name && formData.email ? (
                 <PayPalScriptProvider options={{ 
-                  clientId: "BA_YOUR_SANDBOX_CLIENT_ID_HERE", // REPLACE THIS LATER
+                  clientId: "AcDbBJjcQINFFxHRLhVThmGS8t3C46YJnb45TEI6tTRBUiWpSnHCnJJKpJCk8tXDzK-_bi0WPp1C0s8n", // REPLACE THIS LATER
                   currency: "USD" 
                 }}>
                   <PayPalButtons 

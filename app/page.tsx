@@ -94,18 +94,20 @@ export default async function Home() {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {latestProducts.map((product) => (
                 <div key={product.id} className="group bg-[#0e1011] border border-white/10 rounded-2xl overflow-hidden hover:border-[#14a800]/50 transition-all duration-300 flex flex-col">
-                  {/* Image */}
-                  <div className="h-48 bg-gray-900 relative overflow-hidden">
+                  {/* LINK IMAGE */}
+                  <Link href={`/store/${product.slug}`} className="block h-48 bg-gray-900 relative overflow-hidden">
                     {product.imageUrl ? (
-                       <img src={product.imageUrl} alt={product.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                        <img src={product.imageUrl} alt={product.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                     ) : (
-                       <div className="w-full h-full flex items-center justify-center text-gray-700 font-bold">No Image</div>
+                        <div className="w-full h-full flex items-center justify-center text-gray-700 font-bold">No Image</div>
                     )}
-                  </div>
+                  </Link>
 
-                  {/* Content */}
                   <div className="p-6 flex-1 flex flex-col">
-                    <h3 className="text-xl font-bold mb-2">{product.title}</h3>
+                    {/* LINK TITLE */}
+                    <Link href={`/store/${product.slug}`}>
+                      <h3 className="text-xl font-bold mb-2 hover:text-[#14a800] transition-colors">{product.title}</h3>
+                    </Link>
                     <p className="text-gray-400 text-sm mb-4 line-clamp-2">{product.description}</p>
                     <div className="mt-auto flex items-center justify-between">
                       <span className="text-xl font-bold text-[#14a800]">${Number(product.price).toFixed(2)}</span>

@@ -240,3 +240,38 @@ export async function placeOrder(orderData: any) {
   });
   // In a real app, here you would trigger Stripe/PayPal
 }
+
+// --- CUSTOMER AUTH ---
+export async function customerSignup(formData: FormData) {
+  const name = formData.get('name') as string;
+  const email = formData.get('email') as string;
+  const password = formData.get('password') as string;
+
+  // Simple validation
+  if (!email || !password) throw new Error('Missing fields');
+
+  // Check if exists
+  const existing = await prisma.user.findUnique({ where: { email } });
+  if (existing) throw new Error('User already exists');
+
+  // Create User
+  await prisma.user.create({
+    data: { name, email, password }
+  });
+
+  // In a real app, you would set a session cookie here
+  // For now, we just return success
+}
+
+export async function customerLogin(formData: FormData) {
+  const email = formData.get('email') as string;
+  const password = formData.get('password') as string;
+
+  const user = await prisma.user.findUnique({ where: { email } });
+
+  if (!user || user.password !== password) {
+    throw new Error('Invalid credentials');
+  }
+
+  // Login successful
+}

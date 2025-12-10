@@ -32,7 +32,9 @@ export default async function StorePage() {
               {/* Image */}
               <div className="h-48 bg-gray-900 relative overflow-hidden">
                 {product.imageUrl ? (
+                    <Link href={`/store/${product.slug}`} className="block h-48 bg-gray-900 relative overflow-hidden">
                    <img src={product.imageUrl} alt={product.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                   </Link>
                 ) : (
                    <div className="w-full h-full flex items-center justify-center text-gray-700 font-bold">No Image</div>
                 )}
@@ -40,7 +42,8 @@ export default async function StorePage() {
 
               {/* Content */}
               <div className="p-6 flex-1 flex flex-col">
-                <h2 className="text-2xl font-bold mb-2">{product.title}</h2>
+                <h2 className="text-2xl font-bold mb-2">
+                    <Link href={`/store/${product.slug}`}>{product.title}</Link></h2>
                 <p className="text-gray-400 text-sm mb-4 line-clamp-2">{product.description}</p>
                 <div className="mt-auto flex items-center justify-between">
                   <span className="text-2xl font-bold text-[#14a800]">${Number(product.price).toFixed(2)}</span>
