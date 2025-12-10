@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google"; // 1. Import Google Font
+import { Inter } from "next/font/google";
 import "./globals.css";
 import WhatsAppBtn from "./components/WhatsAppBtn";
+import ToastProvider from "./components/ToastProvider";
 
-// 2. Configure the font
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
@@ -18,12 +18,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body
-        suppressHydrationWarning={true}
-        className={inter.className} // 3. Apply the font class here
-      >
+      <body className={inter.className} suppressHydrationWarning={true}>
         {children}
         <WhatsAppBtn />
+        <ToastProvider />
       </body>
     </html>
   );
