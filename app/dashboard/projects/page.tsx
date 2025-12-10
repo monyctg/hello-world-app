@@ -5,7 +5,7 @@ export default async function DashboardProjects() {
   const projects = await prisma.project.findMany({ orderBy: { id: "desc" } });
 
   return (
-    <div className="max-w-5xl mx-auto p-10 pb-20">
+    <div className="max-w-6xl mx-auto p-4 md:p-8 pb-24 font-sans text-gray-800">
       <h1 className="text-3xl font-bold mb-8 text-gray-800">
         Portfolio Projects
       </h1>

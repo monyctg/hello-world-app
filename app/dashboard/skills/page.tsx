@@ -5,12 +5,12 @@ export default async function DashboardSkills() {
   const skills = await prisma.skill.findMany();
 
   return (
-    <div className="max-w-5xl mx-auto p-10 pb-20">
+    <div className="max-w-6xl mx-auto p-4 md:p-8 pb-24 font-sans text-gray-800">
       <h1 className="text-3xl font-bold mb-8 text-gray-800">
         Skills & Expertise
       </h1>
 
-      <div className="bg-white p-8 rounded-xl shadow-sm border border-gray-200">
+      <div className="max-w-6xl mx-auto p-4 md:p-8 pb-24 font-sans text-gray-800">
         {/* SKILLS LIST */}
         <div className="flex flex-wrap gap-3 mb-8">
           {skills.map((skill) => (

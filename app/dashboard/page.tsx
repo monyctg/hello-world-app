@@ -5,7 +5,7 @@ export default async function DashboardProfile() {
   const content = await prisma.content.findFirst();
 
   return (
-    <div className="max-w-6xl mx-auto p-8 pb-24 font-sans text-gray-800">
+    <div className="max-w-6xl mx-auto p-4 md:p-8 pb-24 font-sans text-gray-800">
       
       <div className="flex items-center justify-between mb-10">
         <div>

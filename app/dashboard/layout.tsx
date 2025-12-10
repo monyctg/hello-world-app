@@ -1,60 +1,48 @@
-import Link from "next/link";
-import { logout } from "../actions";
-import { cookies } from "next/headers";
-import { redirect } from "next/navigation";
+import Link from 'next/link';
+import { logout } from '../actions';
+import { cookies } from 'next/headers';
+import { redirect } from 'next/navigation';
 
-export default async function DashboardLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
   const cookieStore = await cookies();
 
-  if (!cookieStore.has("admin_session")) {
-    redirect("/login");
+  if (!cookieStore.has('admin_session')) {
+    redirect('/login');
   }
 
   return (
-    <div className="flex h-screen bg-gray-100 font-sans">
-      {/* SIDEBAR */}
-      <aside className="w-64 bg-[#0e1011] text-white flex flex-col border-r border-gray-800">
-        <div className="p-6 text-2xl font-bold border-b border-gray-800 tracking-tighter">
-          magfar<span className="text-[#14a800]">.</span>
+    <div className="flex flex-col md:flex-row min-h-screen bg-gray-100 font-sans">
+      {/* SIDEBAR (Becomes Top Header on Mobile) */}
+      <aside className="w-full md:w-64 bg-[#0e1011] text-white flex flex-col border-b md:border-b-0 md:border-r border-gray-800 shrink-0">
+        
+        {/* Logo Area */}
+        <div className="p-4 md:p-6 text-xl md:text-2xl font-bold border-b border-gray-800 tracking-tighter flex justify-between items-center">
+          <div>magfar<span className="text-[#14a800]">.</span></div>
+          {/* Mobile Only Logout (Small) */}
+          <form action={logout} className="md:hidden">
+             <button className="text-red-400 text-xs font-bold uppercase border border-red-900 px-2 py-1 rounded">Log Out</button>
+          </form>
         </div>
-
-        <nav className="flex-1 p-4 flex flex-col gap-2 text-sm font-medium text-gray-400">
-          <Link
-            href="/dashboard"
-            className="p-3 hover:bg-gray-800 hover:text-white rounded transition flex gap-2"
-          >
-            👤 Profile & Photo
+        
+        {/* Navigation - Horizontal on Mobile, Vertical on Desktop */}
+        <nav className="flex-1 p-2 md:p-4 flex flex-row md:flex-col gap-2 text-sm font-medium text-gray-400 overflow-x-auto">
+          <Link href="/dashboard" className="p-2 md:p-3 hover:bg-gray-800 hover:text-white rounded transition flex gap-2 items-center whitespace-nowrap">
+            <span>👤</span> <span className="hidden md:inline">Profile</span><span className="md:hidden">Profile</span>
           </Link>
-          <Link
-            href="/dashboard/testimonials"
-            className="p-3 hover:bg-gray-800 hover:text-white rounded transition flex gap-2"
-          >
-            ⭐ Testimonials
+          <Link href="/dashboard/testimonials" className="p-2 md:p-3 hover:bg-gray-800 hover:text-white rounded transition flex gap-2 items-center whitespace-nowrap">
+            <span>⭐</span> <span className="hidden md:inline">Testimonials</span><span className="md:hidden">Reviews</span>
           </Link>
-          <Link
-            href="/dashboard/projects"
-            className="p-3 hover:bg-gray-800 hover:text-white rounded transition flex gap-2"
-          >
-            🚀 Projects
+          <Link href="/dashboard/projects" className="p-2 md:p-3 hover:bg-gray-800 hover:text-white rounded transition flex gap-2 items-center whitespace-nowrap">
+            <span>🚀</span> <span className="hidden md:inline">Projects</span><span className="md:hidden">Projects</span>
           </Link>
-          <Link
-            href="/dashboard/skills"
-            className="p-3 hover:bg-gray-800 hover:text-white rounded transition flex gap-2"
-          >
-            ⚡ Skills
+          <Link href="/dashboard/skills" className="p-2 md:p-3 hover:bg-gray-800 hover:text-white rounded transition flex gap-2 items-center whitespace-nowrap">
+            <span>⚡</span> <span className="hidden md:inline">Skills</span><span className="md:hidden">Skills</span>
           </Link>
         </nav>
 
-        <div className="p-4 border-t border-gray-800">
-          <Link
-            href="/"
-            target="_blank"
-            className="block text-center p-2 mb-2 bg-[#14a800] text-white rounded font-bold text-xs hover:bg-[#108a00]"
-          >
+        {/* Desktop Only Footer */}
+        <div className="hidden md:block p-4 border-t border-gray-800">
+          <Link href="/" target="_blank" className="block text-center p-2 mb-2 bg-[#14a800] text-white rounded font-bold text-xs hover:bg-[#108a00]">
             View Live Site
           </Link>
           <form action={logout}>
@@ -66,7 +54,9 @@ export default async function DashboardLayout({
       </aside>
 
       {/* MAIN CONTENT */}
-      <main className="flex-1 overflow-auto bg-gray-50">{children}</main>
+      <main className="flex-1 overflow-y-auto h-[calc(100vh-130px)] md:h-screen bg-gray-50">
+        {children}
+      </main>
     </div>
   );
 }
