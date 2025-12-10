@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
+import { Suspense } from "react"; // 1. Import Suspense
 import "./globals.css";
 import WhatsAppBtn from "./components/WhatsAppBtn";
 import ToastProvider from "./components/ToastProvider";
@@ -20,9 +21,17 @@ export default function RootLayout({
     <html lang="en">
       <body className={inter.className} suppressHydrationWarning={true}>
         {children}
+        
         <WhatsAppBtn />
-        <ToastProvider />
+        
+        {/* 2. Wrap ToastProvider in Suspense to fix the build error */}
+        <Suspense fallback={null}>
+          <ToastProvider />
+        </Suspense>
+        
       </body>
     </html>
   );
-}
+}git add .
+git commit -m "Wrapped ToastProvider in Suspense to fix build"
+git push
