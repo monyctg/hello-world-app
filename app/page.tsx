@@ -134,9 +134,6 @@ export default async function Home() {
                 A collection of projects showcasing full-stack capabilities.
               </p>
             </div>
-            <a href={content?.githubLink || "#"} target="_blank" className="text-white hover:text-[#14a800] transition-colors flex items-center gap-2 font-bold">
-              View GitHub →
-            </a>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
