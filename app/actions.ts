@@ -1,69 +1,65 @@
-"use server";
+'use server'
 
-import { prisma } from "@/lib/prisma";
-import { cookies } from "next/headers";
-import { redirect } from "next/navigation";
-import { revalidatePath } from "next/cache";
+import { prisma } from '@/lib/prisma';
+import { cookies } from 'next/headers';
+import { redirect } from 'next/navigation';
+import { revalidatePath } from 'next/cache';
+
+// --- HELPER FOR REDIRECT WITH TOAST ---
+// This function cleans up the code by handling the "Success" redirect
+function successRedirect(path: string, message: string) {
+  revalidatePath(path);
+  redirect(`${path}?success=${encodeURIComponent(message)}`);
+}
 
 // --- AUTH ---
 export async function login(formData: FormData) {
-  const username = formData.get("username") as string;
-  const password = formData.get("password") as string;
+  const username = formData.get('username') as string;
+  const password = formData.get('password') as string;
 
   const admin = await prisma.admin.findUnique({ where: { username } });
 
   if (!admin || admin.password !== password) {
-    throw new Error("Invalid username or password");
+    // For login page, we can just throw error or redirect with error
+    redirect('/login?error=Invalid username or password');
   }
 
   const oneDay = 24 * 60 * 60 * 1000;
-  (await cookies()).set("admin_session", "true", {
-    expires: Date.now() + oneDay,
-  });
+  (await cookies()).set('admin_session', 'true', { expires: Date.now() + oneDay });
 
-  redirect("/dashboard");
+  redirect('/dashboard');
 }
 
 export async function logout() {
-  (await cookies()).delete("admin_session");
-  redirect("/login");
+  (await cookies()).delete('admin_session');
+  redirect('/login?success=Logged out successfully');
 }
 
 // --- PROFILE ---
 export async function updateText(formData: FormData) {
   const cookieStore = await cookies();
-  if (!cookieStore.has('admin_session')) throw new Error('Unauthorized');
+  if (!cookieStore.has('admin_session')) redirect('/login');
 
   // 1. HANDLE IMAGE UPLOAD (ImgBB)
-  let imageUrl = formData.get('imageUrl') as string; // Keep old URL by default
-  const imageFile = formData.get('imageFile') as File; // Check for new file
+  let imageUrl = formData.get('imageUrl') as string;
+  const imageFile = formData.get('imageFile') as File;
 
   if (imageFile && imageFile.size > 0) {
-    console.log("Uploading to ImgBB...");
-    
-    // Create form data for ImgBB
     const imgBBFormData = new FormData();
     imgBBFormData.append('image', imageFile);
     imgBBFormData.append('key', process.env.IMGBB_API_KEY as string);
 
-    // Send to ImgBB API
     try {
       const response = await fetch('https://api.imgbb.com/1/upload', {
         method: 'POST',
         body: imgBBFormData,
       });
-      
       const result = await response.json();
-      
       if (result.success) {
-        imageUrl = result.data.url; // Update variable with new ImgBB URL
-      } else {
-        console.error("ImgBB Error:", result);
-        throw new Error('Image upload failed');
+        imageUrl = result.data.url;
       }
     } catch (error) {
-      console.error("Upload failed:", error);
-      throw new Error('Failed to connect to image server');
+      console.error("Upload failed", error);
     }
   }
 
@@ -76,13 +72,12 @@ export async function updateText(formData: FormData) {
     statNumber: formData.get('statNumber') as string,
     statLabel: formData.get('statLabel') as string,
     upworkLink: formData.get('upworkLink') as string,
-    imageUrl: imageUrl, // Save the new (or old) URL
+    imageUrl: imageUrl,
     aboutTitle: formData.get('aboutTitle') as string,
     aboutBody: formData.get('aboutBody') as string,
-    githubLink: formData.get('githubLink') as string, // Added Github link support
+    githubLink: formData.get('githubLink') as string,
   };
 
-  // 3. UPDATE DATABASE
   const firstRecord = await prisma.content.findFirst();
   
   if (firstRecord) {
@@ -91,99 +86,92 @@ export async function updateText(formData: FormData) {
     await prisma.content.create({ data });
   }
 
-  revalidatePath('/');
-  revalidatePath('/dashboard');
+  // Redirect with Success Message
+  successRedirect('/dashboard', 'Profile updated successfully!');
 }
 
 // --- PROJECTS ---
 export async function addProject(formData: FormData) {
   const cookieStore = await cookies();
-  if (!cookieStore.has("admin_session")) throw new Error("Unauthorized");
+  if (!cookieStore.has('admin_session')) redirect('/login');
 
   await prisma.project.create({
     data: {
-      title: formData.get("title") as string,
-      description: formData.get("description") as string,
-      link: formData.get("link") as string,
-      techStack: formData.get("techStack") as string,
-    },
+      title: formData.get('title') as string,
+      description: formData.get('description') as string,
+      link: formData.get('link') as string,
+      techStack: formData.get('techStack') as string,
+    }
   });
 
-  revalidatePath("/");
-  revalidatePath("/dashboard/projects");
+  successRedirect('/dashboard/projects', 'New project added!');
 }
 
 export async function deleteProject(formData: FormData) {
   const cookieStore = await cookies();
-  if (!cookieStore.has("admin_session")) throw new Error("Unauthorized");
+  if (!cookieStore.has('admin_session')) redirect('/login');
 
-  await prisma.project.delete({
-    where: { id: parseInt(formData.get("id") as string) },
-  });
-  revalidatePath("/");
-  revalidatePath("/dashboard/projects");
+  await prisma.project.delete({ where: { id: parseInt(formData.get('id') as string) } });
+
+  successRedirect('/dashboard/projects', 'Project deleted.');
 }
 
 // --- SKILLS ---
 export async function addSkill(formData: FormData) {
   const cookieStore = await cookies();
-  if (!cookieStore.has("admin_session")) throw new Error("Unauthorized");
+  if (!cookieStore.has('admin_session')) redirect('/login');
+  
+  await prisma.skill.create({ data: { name: formData.get('name') as string } });
 
-  await prisma.skill.create({ data: { name: formData.get("name") as string } });
-  revalidatePath("/");
-  revalidatePath("/dashboard/skills");
+  successRedirect('/dashboard/skills', 'Skill added!');
 }
 
 export async function deleteSkill(formData: FormData) {
   const cookieStore = await cookies();
-  if (!cookieStore.has("admin_session")) throw new Error("Unauthorized");
+  if (!cookieStore.has('admin_session')) redirect('/login');
+  
+  await prisma.skill.delete({ where: { id: parseInt(formData.get('id') as string) } });
 
-  await prisma.skill.delete({
-    where: { id: parseInt(formData.get("id") as string) },
-  });
-  revalidatePath("/");
-  revalidatePath("/dashboard/skills");
+  successRedirect('/dashboard/skills', 'Skill removed.');
 }
 
 // --- TESTIMONIALS ---
 export async function addTestimonial(formData: FormData) {
   const cookieStore = await cookies();
-  if (!cookieStore.has("admin_session")) throw new Error("Unauthorized");
+  if (!cookieStore.has('admin_session')) redirect('/login');
 
   await prisma.testimonial.create({
     data: {
-      client: formData.get("client") as string,
-      review: formData.get("review") as string,
-      rating: formData.get("rating") as string,
-    },
+      client: formData.get('client') as string,
+      review: formData.get('review') as string,
+      rating: formData.get('rating') as string,
+    }
   });
-  revalidatePath("/");
-  revalidatePath("/dashboard/testimonials");
+
+  successRedirect('/dashboard/testimonials', 'Testimonial added!');
 }
 
 export async function editTestimonial(formData: FormData) {
   const cookieStore = await cookies();
-  if (!cookieStore.has("admin_session")) throw new Error("Unauthorized");
+  if (!cookieStore.has('admin_session')) redirect('/login');
 
   await prisma.testimonial.update({
-    where: { id: parseInt(formData.get("id") as string) },
+    where: { id: parseInt(formData.get('id') as string) },
     data: {
-      client: formData.get("client") as string,
-      review: formData.get("review") as string,
-      rating: formData.get("rating") as string,
-    },
+      client: formData.get('client') as string,
+      review: formData.get('review') as string,
+      rating: formData.get('rating') as string,
+    }
   });
-  revalidatePath("/");
-  revalidatePath("/dashboard/testimonials");
+
+  successRedirect('/dashboard/testimonials', 'Testimonial updated!');
 }
 
 export async function deleteTestimonial(formData: FormData) {
   const cookieStore = await cookies();
-  if (!cookieStore.has("admin_session")) throw new Error("Unauthorized");
+  if (!cookieStore.has('admin_session')) redirect('/login');
+  
+  await prisma.testimonial.delete({ where: { id: parseInt(formData.get('id') as string) } });
 
-  await prisma.testimonial.delete({
-    where: { id: parseInt(formData.get("id") as string) },
-  });
-  revalidatePath("/");
-  revalidatePath("/dashboard/testimonials");
+  successRedirect('/dashboard/testimonials', 'Testimonial deleted.');
 }

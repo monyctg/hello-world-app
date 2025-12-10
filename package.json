@@ -13,7 +13,8 @@
     "geist": "^1.5.1",
     "next": "16.0.8",
     "react": "19.2.1",
-    "react-dom": "19.2.1"
+    "react-dom": "19.2.1",
+    "sonner": "^2.0.7"
   },
   "devDependencies": {
     "@prisma/client": "^5.22.0",
