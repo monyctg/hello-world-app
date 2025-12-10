@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
-// 1. IMPORT THE BUTTON
+// 1. IMPORT THE BUTTON 
 import WhatsAppBtn from "./components/WhatsAppBtn";
 
 const geistSans = localFont({
