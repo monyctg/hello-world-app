@@ -11,10 +11,12 @@
   },
   "dependencies": {
     "geist": "^1.5.1",
+    "lucide-react": "^0.559.0",
     "next": "16.0.8",
     "react": "19.2.1",
     "react-dom": "19.2.1",
-    "sonner": "^2.0.7"
+    "sonner": "^2.0.7",
+    "zustand": "^5.0.9"
   },
   "devDependencies": {
     "@prisma/client": "^5.22.0",

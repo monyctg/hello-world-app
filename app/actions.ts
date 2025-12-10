@@ -175,3 +175,68 @@ export async function deleteTestimonial(formData: FormData) {
 
   successRedirect('/dashboard/testimonials', 'Testimonial deleted.');
 }
+
+
+// --- PRODUCTS ---
+export async function addProduct(formData: FormData) {
+  const cookieStore = await cookies();
+  if (!cookieStore.has('admin_session')) throw new Error('Unauthorized');
+
+  // Handle Image Upload
+  let imageUrl = formData.get('imageUrl') as string;
+  const imageFile = formData.get('imageFile') as File;
+
+  if (imageFile && imageFile.size > 0) {
+    const imgBBFormData = new FormData();
+    imgBBFormData.append('image', imageFile);
+    imgBBFormData.append('key', process.env.IMGBB_API_KEY as string);
+    try {
+      const response = await fetch('https://api.imgbb.com/1/upload', { method: 'POST', body: imgBBFormData });
+      const result = await response.json();
+      if (result.success) imageUrl = result.data.url;
+    } catch (e) { console.error(e); }
+  }
+
+  // Create Slug from Title
+  const title = formData.get('title') as string;
+  const slug = title.toLowerCase().replace(/ /g, '-').replace(/[^\w-]+/g, '');
+
+  await prisma.product.create({
+    data: {
+      title,
+      slug,
+      description: formData.get('description') as string,
+      price: parseFloat(formData.get('price') as string),
+      features: formData.get('features') as string,
+      demoLink: formData.get('demoLink') as string,
+      imageUrl,
+      // For now, we assume simple variations or empty
+      variations: formData.get('variations') as string
+    }
+  });
+
+  revalidatePath('/store');
+  revalidatePath('/dashboard/products');
+}
+
+export async function deleteProduct(formData: FormData) {
+  const cookieStore = await cookies();
+  if (!cookieStore.has('admin_session')) throw new Error('Unauthorized');
+  await prisma.product.delete({ where: { id: parseInt(formData.get('id') as string) } });
+  revalidatePath('/store');
+  revalidatePath('/dashboard/products');
+}
+
+// --- ORDERS ---
+export async function placeOrder(orderData: any) {
+  // logic to save order
+  await prisma.order.create({
+    data: {
+      customerName: orderData.name,
+      email: orderData.email,
+      total: orderData.total,
+      status: 'pending' 
+    }
+  });
+  // In a real app, here you would trigger Stripe/PayPal
+}
