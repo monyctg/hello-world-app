@@ -12,7 +12,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
 
   return (
     <div className="flex flex-col md:flex-row min-h-screen bg-gray-100 font-sans">
-      {/* SIDEBAR (Top Header on Mobile, Left Sidebar on Desktop) */}
+      {/* SIDEBAR */}
       <aside className="w-full md:w-64 bg-[#0e1011] text-white flex flex-col border-b md:border-b-0 md:border-r border-gray-800 shrink-0">
         
         {/* Logo Area */}
@@ -28,6 +28,9 @@ export default async function DashboardLayout({ children }: { children: React.Re
         <nav className="flex-1 p-2 md:p-4 flex flex-row md:flex-col gap-2 text-sm font-medium text-gray-400 overflow-x-auto">
           <Link href="/dashboard" className="p-2 md:p-3 hover:bg-gray-800 hover:text-white rounded transition flex gap-2 items-center whitespace-nowrap">
             <span>👤</span> <span className="hidden md:inline">Profile</span><span className="md:hidden">Profile</span>
+          </Link>
+          <Link href="/dashboard/products" className="p-2 md:p-3 hover:bg-gray-800 hover:text-white rounded transition flex gap-2 items-center whitespace-nowrap">
+            <span>📦</span> <span className="hidden md:inline">Products</span><span className="md:hidden">Products</span>
           </Link>
           <Link href="/dashboard/testimonials" className="p-2 md:p-3 hover:bg-gray-800 hover:text-white rounded transition flex gap-2 items-center whitespace-nowrap">
             <span>⭐</span> <span className="hidden md:inline">Testimonials</span><span className="md:hidden">Reviews</span>
