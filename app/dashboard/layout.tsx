@@ -29,6 +29,16 @@ export default async function DashboardLayout({ children }: { children: React.Re
           <Link href="/dashboard" className="p-2 md:p-3 hover:bg-gray-800 hover:text-white rounded transition flex gap-2 items-center whitespace-nowrap">
             <span>👤</span> <span className="hidden md:inline">Profile</span><span className="md:hidden">Profile</span>
           </Link>
+          
+          {/* --- NEW LINKS ADDED HERE --- */}
+          <Link href="/dashboard/orders" className="p-2 md:p-3 hover:bg-gray-800 hover:text-white rounded transition flex gap-2 items-center whitespace-nowrap text-blue-400 font-bold">
+            <span>🛒</span> <span className="hidden md:inline">Orders</span><span className="md:hidden">Orders</span>
+          </Link>
+          <Link href="/dashboard/coupons" className="p-2 md:p-3 hover:bg-gray-800 hover:text-white rounded transition flex gap-2 items-center whitespace-nowrap text-green-400 font-bold">
+            <span>🎟️</span> <span className="hidden md:inline">Coupons</span><span className="md:hidden">Coupons</span>
+          </Link>
+          {/* --------------------------- */}
+
           <Link href="/dashboard/products" className="p-2 md:p-3 hover:bg-gray-800 hover:text-white rounded transition flex gap-2 items-center whitespace-nowrap">
             <span>📦</span> <span className="hidden md:inline">Products</span><span className="md:hidden">Products</span>
           </Link>
