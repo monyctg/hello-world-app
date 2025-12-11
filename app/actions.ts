@@ -313,3 +313,51 @@ export async function updateOrderStatus(formData: FormData) {
   });
   successRedirect('/dashboard/orders', 'Order Status Updated');
 }
+
+// --- DEBUG: TEST EMAIL ---
+import nodemailer from 'nodemailer';
+
+export async function sendTestEmail(formData: FormData) {
+  const targetEmail = formData.get('email') as string;
+
+  console.log("--- STARTING EMAIL TEST ---");
+  console.log("Host:", process.env.SMTP_HOST);
+  console.log("User:", process.env.SMTP_USER);
+  // Do NOT log the password for security, just check if it exists
+  console.log("Pass Exists:", !!process.env.SMTP_PASS);
+
+  const transporter = nodemailer.createTransport({
+    host: process.env.SMTP_HOST || 'smtp-relay.brevo.com',
+    port: 587,
+    secure: false, // true for 465, false for other ports
+    auth: {
+      user: process.env.SMTP_USER,
+      pass: process.env.SMTP_PASS,
+    },
+  });
+
+  try {
+    // 1. Verify Connection first
+    console.log("Verifying SMTP connection...");
+    await transporter.verify();
+    console.log("SMTP Connection Successful!");
+
+    // 2. Send Email
+    console.log("Sending mail to:", targetEmail);
+    const info = await transporter.sendMail({
+      from: `"Test Bot" <${process.env.SMTP_USER}>`, // THIS MUST MATCH BREVO LOGIN
+      to: targetEmail,
+      subject: "Test Email from Magfar Store",
+      text: "If you are reading this, your SMTP configuration is working perfectly!",
+      html: "<h1>Success!</h1><p>Your email system is working.</p>",
+    });
+
+    console.log("Message sent: %s", info.messageId);
+    return { success: true, message: "Email sent successfully!" };
+
+  } catch (error: any) {
+    console.error("EMAIL ERROR:", error);
+    // Return the actual error message to the frontend so you can see it
+    return { success: false, message: error.message || "Unknown error" };
+  }
+}
