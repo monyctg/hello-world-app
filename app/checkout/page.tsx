@@ -48,24 +48,26 @@ export default function CheckoutPage() {
     }
   };
 
-  const handleSuccess = async () => {
-    try {
-      toast.loading("Processing Order...");
-      await placeOrder({
-        name: formData.name,
-        email: formData.email,
-        total: total,
-        items: cart, // Send items to backend
-        couponCode: discountPercent > 0 ? couponCode : null
-      });
-      toast.dismiss();
-      toast.success("Order Placed Successfully!");
-      clearCart();
-      router.push('/store');
-    } catch (error) {
-      toast.error("Error saving order.");
-    }
-  };
+const handleSuccess = async () => {
+  try {
+    toast.loading("Processing Order...");
+    await placeOrder({
+      name: formData.name,
+      email: formData.email,
+      total: total,
+      items: cart,
+      couponCode: discountPercent > 0 ? couponCode : null
+    });
+    toast.dismiss();
+    toast.success("Order Placed Successfully!");
+    clearCart();
+    
+    // CHANGED: Redirect to Thank You page
+    router.push('/thank-you'); 
+  } catch (error) {
+    toast.error("Error saving order.");
+  }
+};
 
   if (!isMounted) return null;
 

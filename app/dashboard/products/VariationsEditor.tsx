@@ -3,24 +3,25 @@
 import { useState, useEffect } from 'react';
 import { Plus, Trash2 } from 'lucide-react';
 
-// New structure: Plan + Sites + Price
 type Variation = {
   plan: string;
   sites: string;
   price: string;
 };
 
-const PLAN_OPTIONS = ["1 Year", "5 Years", "Lifetime", "Custom"];
-const SITE_OPTIONS = ["1 Site", "5 Sites", "10 Sites", "Unlimited Sites", "Custom"];
+// REMOVED "Custom" from these arrays
+const PLAN_OPTIONS = ["1 Year", "5 Years", "Lifetime"];
+const SITE_OPTIONS = ["1 Site", "5 Sites", "10 Sites", "Unlimited Sites"];
 
 export default function VariationsEditor({ defaultValue }: { defaultValue?: string }) {
+  // ... rest of the file remains exactly the same ...
+  // (Just copy the rest of the file from the previous version if needed, or keep it as is)
   const [variations, setVariations] = useState<Variation[]>([]);
 
   useEffect(() => {
     if (defaultValue) {
       try {
         const parsed = JSON.parse(defaultValue);
-        // Ensure backward compatibility or empty
         if (Array.isArray(parsed)) setVariations(parsed);
       } catch (e) { setVariations([]); }
     }
@@ -59,7 +60,6 @@ export default function VariationsEditor({ defaultValue }: { defaultValue?: stri
         {variations.map((v, i) => (
           <div key={i} className="flex flex-col md:flex-row gap-2 items-start md:items-center bg-white p-2 rounded border shadow-sm">
             
-            {/* PLAN DROPDOWN */}
             <select 
               value={v.plan} 
               onChange={(e) => updateRow(i, 'plan', e.target.value)}
@@ -68,7 +68,6 @@ export default function VariationsEditor({ defaultValue }: { defaultValue?: stri
               {PLAN_OPTIONS.map(opt => <option key={opt} value={opt}>{opt}</option>)}
             </select>
 
-            {/* SITES DROPDOWN */}
             <select 
               value={v.sites} 
               onChange={(e) => updateRow(i, 'sites', e.target.value)}
@@ -77,7 +76,6 @@ export default function VariationsEditor({ defaultValue }: { defaultValue?: stri
               {SITE_OPTIONS.map(opt => <option key={opt} value={opt}>{opt}</option>)}
             </select>
 
-            {/* PRICE INPUT */}
             <div className="relative w-full md:w-32">
               <span className="absolute left-2 top-2 text-gray-500 text-sm">$</span>
               <input 
@@ -96,7 +94,6 @@ export default function VariationsEditor({ defaultValue }: { defaultValue?: stri
           </div>
         ))}
       </div>
-
       <input type="hidden" name="variations" value={JSON.stringify(variations)} />
     </div>
   );
