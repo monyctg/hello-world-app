@@ -16,7 +16,7 @@ export default function TitleInput({ name, label, required = false }: { name: st
         name={name} 
         value={value}
         onChange={(e) => setValue(e.target.value)}
-        className="w-full p-3 border rounded focus:ring-2 focus:ring-blue-500 outline-none" 
+        className="w-full p-3 border rounded focus:ring-2 focus:ring-blue-500 outline-none text-black bg-white" 
         required={required}
       />
     </div>

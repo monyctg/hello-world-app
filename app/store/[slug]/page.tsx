@@ -6,6 +6,8 @@ import { Metadata } from 'next';
 
 import ProductActions from './ProductActions'; // Import the new component
 
+
+
 // 1. Define Props for Next.js 15 (Params is a Promise now)
 type Props = {
   params: Promise<{ slug: string }>;

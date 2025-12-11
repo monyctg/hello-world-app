@@ -15,7 +15,8 @@ export default function VariationsEditor({ defaultValue }: { defaultValue?: stri
   useEffect(() => {
     if (defaultValue) {
       try {
-        setVariations(JSON.parse(defaultValue));
+        const parsed = JSON.parse(defaultValue);
+        if (Array.isArray(parsed)) setVariations(parsed);
       } catch (e) {
         setVariations([]);
       }
@@ -58,7 +59,7 @@ export default function VariationsEditor({ defaultValue }: { defaultValue?: stri
               placeholder="e.g. Unlimited Sites - Lifetime"
               value={v.name}
               onChange={(e) => updateRow(i, 'name', e.target.value)}
-              className="flex-1 p-2 border rounded text-sm text-black"
+              className="flex-1 p-2 border rounded text-sm text-black bg-white"
               required
             />
             <input 
@@ -66,7 +67,7 @@ export default function VariationsEditor({ defaultValue }: { defaultValue?: stri
               placeholder="Price"
               value={v.price}
               onChange={(e) => updateRow(i, 'price', e.target.value)}
-              className="w-24 p-2 border rounded text-sm text-black"
+              className="w-24 p-2 border rounded text-sm text-black bg-white"
               required
             />
             <button type="button" onClick={() => removeRow(i)} className="text-red-500 hover:text-red-700">
