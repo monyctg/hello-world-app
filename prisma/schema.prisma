@@ -50,16 +50,17 @@ model Admin {
 }
 
 model Product {
-  id          Int      @id @default(autoincrement())
-  title       String
-  slug        String   @unique
-  description String
-  features    String?
-  imageUrl    String?
-  price       Decimal  @db.Decimal(10, 2)
-  demoLink    String?
-  createdAt   DateTime @default(now())
-  variations  String?  
+  id           Int      @id @default(autoincrement())
+  title        String
+  slug         String   @unique
+  description  String
+  features     String?
+  imageUrl     String?
+  price        Decimal  @db.Decimal(10, 2) // Base Price
+  officialLink String?  // Changed from demoLink
+  focusKeyword String?  // NEW: SEO Focus Keyword
+  variations   String?  // NEW: Stores JSON like [{"name":"Lifetime","price":199}]
+  createdAt    DateTime @default(now())
 }
 
 model Order {

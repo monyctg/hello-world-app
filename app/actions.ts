@@ -176,28 +176,29 @@ export async function deleteTestimonial(formData: FormData) {
   successRedirect('/dashboard/testimonials', 'Testimonial deleted.');
 }
 
+// ... imports ...
 
 // --- PRODUCTS ---
+
+// 1. ADD PRODUCT
 export async function addProduct(formData: FormData) {
   const cookieStore = await cookies();
   if (!cookieStore.has('admin_session')) throw new Error('Unauthorized');
 
-  // Handle Image Upload
+  // Image Upload Logic (Keep existing)
   let imageUrl = formData.get('imageUrl') as string;
   const imageFile = formData.get('imageFile') as File;
-
   if (imageFile && imageFile.size > 0) {
     const imgBBFormData = new FormData();
     imgBBFormData.append('image', imageFile);
     imgBBFormData.append('key', process.env.IMGBB_API_KEY as string);
     try {
-      const response = await fetch('https://api.imgbb.com/1/upload', { method: 'POST', body: imgBBFormData });
-      const result = await response.json();
-      if (result.success) imageUrl = result.data.url;
-    } catch (e) { console.error(e); }
+      const res = await fetch('https://api.imgbb.com/1/upload', { method: 'POST', body: imgBBFormData });
+      const json = await res.json();
+      if (json.success) imageUrl = json.data.url;
+    } catch(e) {}
   }
 
-  // Create Slug from Title
   const title = formData.get('title') as string;
   const slug = title.toLowerCase().replace(/ /g, '-').replace(/[^\w-]+/g, '');
 
@@ -208,15 +209,56 @@ export async function addProduct(formData: FormData) {
       description: formData.get('description') as string,
       price: parseFloat(formData.get('price') as string),
       features: formData.get('features') as string,
-      demoLink: formData.get('demoLink') as string,
+      officialLink: formData.get('officialLink') as string, // Renamed
+      focusKeyword: formData.get('focusKeyword') as string, // New
+      variations: formData.get('variations') as string,     // New
       imageUrl,
-      // For now, we assume simple variations or empty
-      variations: formData.get('variations') as string
     }
   });
 
   revalidatePath('/store');
   revalidatePath('/dashboard/products');
+}
+
+// 2. UPDATE PRODUCT (NEW)
+export async function updateProduct(formData: FormData) {
+  const cookieStore = await cookies();
+  if (!cookieStore.has('admin_session')) throw new Error('Unauthorized');
+
+  const id = parseInt(formData.get('id') as string);
+  
+  // Handle Image Upload (only update if new file exists)
+  let imageUrl = formData.get('imageUrl') as string; // existing URL
+  const imageFile = formData.get('imageFile') as File;
+  if (imageFile && imageFile.size > 0) {
+     // ... insert same ImgBB upload logic as above ...
+     const imgBBFormData = new FormData();
+     imgBBFormData.append('image', imageFile);
+     imgBBFormData.append('key', process.env.IMGBB_API_KEY as string);
+     try {
+       const res = await fetch('https://api.imgbb.com/1/upload', { method: 'POST', body: imgBBFormData });
+       const json = await res.json();
+       if (json.success) imageUrl = json.data.url;
+     } catch(e) {}
+  }
+
+  await prisma.product.update({
+    where: { id },
+    data: {
+      title: formData.get('title') as string,
+      description: formData.get('description') as string,
+      price: parseFloat(formData.get('price') as string),
+      features: formData.get('features') as string,
+      officialLink: formData.get('officialLink') as string,
+      focusKeyword: formData.get('focusKeyword') as string,
+      variations: formData.get('variations') as string,
+      imageUrl,
+    }
+  });
+
+  revalidatePath('/store');
+  revalidatePath('/dashboard/products');
+  redirect('/dashboard/products'); // Go back to list
 }
 
 export async function deleteProduct(formData: FormData) {
