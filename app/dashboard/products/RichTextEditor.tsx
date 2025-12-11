@@ -2,7 +2,8 @@
 
 import { useState } from 'react';
 import dynamic from 'next/dynamic';
-import 'react-quill/dist/quill.snow.css';
+// FIX: Import CSS from the NEW package
+import 'react-quill-new/dist/quill.snow.css';
 
 // Dynamically import Quill to avoid "document is not defined" error in Next.js
 const ReactQuill = dynamic(() => import('react-quill-new'), { ssr: false });
@@ -22,12 +23,12 @@ export default function RichTextEditor({ name, label, defaultValue = '' }: { nam
         </span>
       </div>
       
-      <div className="bg-white">
+      <div className="bg-white text-black">
         <ReactQuill 
           theme="snow" 
           value={value} 
           onChange={setValue} 
-          className="h-64 mb-12" // mb-12 to make room for the toolbar
+          className="h-64 mb-12" 
           modules={{
             toolbar: [
               [{ 'header': [2, 3, false] }],
