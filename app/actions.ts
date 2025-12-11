@@ -5,6 +5,12 @@ import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 import { revalidatePath } from 'next/cache';
 
+// --- HELPER: Redirect with Toast Message ---
+function successRedirect(path: string, message: string) {
+  revalidatePath(path); // Refresh data
+  redirect(`${path}?success=${encodeURIComponent(message)}`); // Trigger Toast
+}
+
 // --- 1. ADMIN AUTH ---
 export async function login(formData: FormData) {
   const username = formData.get('username') as string;
@@ -13,7 +19,7 @@ export async function login(formData: FormData) {
   const admin = await prisma.admin.findUnique({ where: { username } });
 
   if (!admin || admin.password !== password) {
-    throw new Error('Invalid username or password');
+    redirect('/login?error=Invalid credentials');
   }
 
   const oneDay = 24 * 60 * 60 * 1000;
@@ -24,7 +30,7 @@ export async function login(formData: FormData) {
 
 export async function logout() {
   (await cookies()).delete('admin_session');
-  redirect('/login');
+  redirect('/login?success=Logged out successfully');
 }
 
 // --- 2. CUSTOMER AUTH ---
@@ -51,9 +57,8 @@ export async function customerLogin(formData: FormData) {
 // --- 3. PROFILE CONTENT ---
 export async function updateText(formData: FormData) {
   const cookieStore = await cookies();
-  if (!cookieStore.has('admin_session')) throw new Error('Unauthorized');
+  if (!cookieStore.has('admin_session')) redirect('/login');
 
-  // Handle Image Upload
   let imageUrl = formData.get('imageUrl') as string;
   const imageFile = formData.get('imageFile') as File;
   if (imageFile && imageFile.size > 0) {
@@ -88,14 +93,13 @@ export async function updateText(formData: FormData) {
     await prisma.content.create({ data });
   }
 
-  revalidatePath('/');
-  revalidatePath('/dashboard');
+  successRedirect('/dashboard', 'Profile Updated Successfully!');
 }
 
 // --- 4. PRODUCTS ---
 export async function addProduct(formData: FormData) {
   const cookieStore = await cookies();
-  if (!cookieStore.has('admin_session')) throw new Error('Unauthorized');
+  if (!cookieStore.has('admin_session')) redirect('/login');
 
   let imageUrl = formData.get('imageUrl') as string;
   const imageFile = formData.get('imageFile') as File;
@@ -127,13 +131,12 @@ export async function addProduct(formData: FormData) {
     }
   });
 
-  revalidatePath('/store');
-  revalidatePath('/dashboard/products');
+  successRedirect('/dashboard/products', 'Product Created!');
 }
 
 export async function updateProduct(formData: FormData) {
   const cookieStore = await cookies();
-  if (!cookieStore.has('admin_session')) throw new Error('Unauthorized');
+  if (!cookieStore.has('admin_session')) redirect('/login');
 
   const id = parseInt(formData.get('id') as string);
   
@@ -164,23 +167,21 @@ export async function updateProduct(formData: FormData) {
     }
   });
 
-  revalidatePath('/store');
-  revalidatePath('/dashboard/products');
-  redirect('/dashboard/products');
+  successRedirect('/dashboard/products', 'Product Updated!');
 }
 
 export async function deleteProduct(formData: FormData) {
   const cookieStore = await cookies();
-  if (!cookieStore.has('admin_session')) throw new Error('Unauthorized');
+  if (!cookieStore.has('admin_session')) redirect('/login');
   await prisma.product.delete({ where: { id: parseInt(formData.get('id') as string) } });
-  revalidatePath('/store');
-  revalidatePath('/dashboard/products');
+  
+  successRedirect('/dashboard/products', 'Product Deleted.');
 }
 
 // --- 5. PROJECTS, SKILLS, TESTIMONIALS ---
 export async function addProject(formData: FormData) {
   const cookieStore = await cookies();
-  if (!cookieStore.has('admin_session')) throw new Error('Unauthorized');
+  if (!cookieStore.has('admin_session')) redirect('/login');
   await prisma.project.create({
     data: {
       title: formData.get('title') as string,
@@ -189,29 +190,29 @@ export async function addProject(formData: FormData) {
       techStack: formData.get('techStack') as string,
     }
   });
-  revalidatePath('/dashboard/projects');
+  successRedirect('/dashboard/projects', 'Project Added!');
 }
 export async function deleteProject(formData: FormData) {
   const cookieStore = await cookies();
-  if (!cookieStore.has('admin_session')) throw new Error('Unauthorized');
+  if (!cookieStore.has('admin_session')) redirect('/login');
   await prisma.project.delete({ where: { id: parseInt(formData.get('id') as string) } });
-  revalidatePath('/dashboard/projects');
+  successRedirect('/dashboard/projects', 'Project Deleted.');
 }
 export async function addSkill(formData: FormData) {
   const cookieStore = await cookies();
-  if (!cookieStore.has('admin_session')) throw new Error('Unauthorized');
+  if (!cookieStore.has('admin_session')) redirect('/login');
   await prisma.skill.create({ data: { name: formData.get('name') as string } });
-  revalidatePath('/dashboard/skills');
+  successRedirect('/dashboard/skills', 'Skill Added!');
 }
 export async function deleteSkill(formData: FormData) {
   const cookieStore = await cookies();
-  if (!cookieStore.has('admin_session')) throw new Error('Unauthorized');
+  if (!cookieStore.has('admin_session')) redirect('/login');
   await prisma.skill.delete({ where: { id: parseInt(formData.get('id') as string) } });
-  revalidatePath('/dashboard/skills');
+  successRedirect('/dashboard/skills', 'Skill Deleted.');
 }
 export async function addTestimonial(formData: FormData) {
   const cookieStore = await cookies();
-  if (!cookieStore.has('admin_session')) throw new Error('Unauthorized');
+  if (!cookieStore.has('admin_session')) redirect('/login');
   await prisma.testimonial.create({
     data: {
       client: formData.get('client') as string,
@@ -219,11 +220,11 @@ export async function addTestimonial(formData: FormData) {
       rating: formData.get('rating') as string,
     }
   });
-  revalidatePath('/dashboard/testimonials');
+  successRedirect('/dashboard/testimonials', 'Review Added!');
 }
 export async function editTestimonial(formData: FormData) {
   const cookieStore = await cookies();
-  if (!cookieStore.has('admin_session')) throw new Error('Unauthorized');
+  if (!cookieStore.has('admin_session')) redirect('/login');
   await prisma.testimonial.update({
     where: { id: parseInt(formData.get('id') as string) },
     data: {
@@ -232,33 +233,33 @@ export async function editTestimonial(formData: FormData) {
       rating: formData.get('rating') as string,
     }
   });
-  revalidatePath('/dashboard/testimonials');
+  successRedirect('/dashboard/testimonials', 'Review Updated!');
 }
 export async function deleteTestimonial(formData: FormData) {
   const cookieStore = await cookies();
-  if (!cookieStore.has('admin_session')) throw new Error('Unauthorized');
+  if (!cookieStore.has('admin_session')) redirect('/login');
   await prisma.testimonial.delete({ where: { id: parseInt(formData.get('id') as string) } });
-  revalidatePath('/dashboard/testimonials');
+  successRedirect('/dashboard/testimonials', 'Review Deleted.');
 }
 
 // --- 6. COUPONS ---
 export async function addCoupon(formData: FormData) {
   const cookieStore = await cookies();
-  if (!cookieStore.has('admin_session')) throw new Error('Unauthorized');
+  if (!cookieStore.has('admin_session')) redirect('/login');
   await prisma.coupon.create({
     data: {
       code: formData.get('code') as string,
       discount: parseInt(formData.get('discount') as string),
     }
   });
-  revalidatePath('/dashboard/coupons');
+  successRedirect('/dashboard/coupons', 'Coupon Created!');
 }
 
 export async function deleteCoupon(formData: FormData) {
   const cookieStore = await cookies();
-  if (!cookieStore.has('admin_session')) throw new Error('Unauthorized');
+  if (!cookieStore.has('admin_session')) redirect('/login');
   await prisma.coupon.delete({ where: { id: parseInt(formData.get('id') as string) } });
-  revalidatePath('/dashboard/coupons');
+  successRedirect('/dashboard/coupons', 'Coupon Deleted.');
 }
 
 export async function verifyCoupon(code: string) {
@@ -279,15 +280,14 @@ export async function placeOrder(orderData: any) {
       status: orderData.total === 0 ? 'Complete' : 'Processing'
     }
   });
-  // No revalidate needed as we redirect to Thank You page
 }
 
 export async function updateOrderStatus(formData: FormData) {
   const cookieStore = await cookies();
-  if (!cookieStore.has('admin_session')) throw new Error('Unauthorized');
+  if (!cookieStore.has('admin_session')) redirect('/login');
   await prisma.order.update({
     where: { id: parseInt(formData.get('id') as string) },
     data: { status: formData.get('status') as string }
   });
-  revalidatePath('/dashboard/orders');
+  successRedirect('/dashboard/orders', 'Order Status Updated');
 }

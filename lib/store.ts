@@ -6,6 +6,7 @@ type CartItem = {
   title: string;
   price: number;
   image: string;
+  customNote?: string; // <--- ADD THIS LINE (Optional string)
 };
 
 type CartStore = {
