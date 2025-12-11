@@ -1,5 +1,7 @@
 import { prisma } from '@/lib/prisma';
 import { addProduct, deleteProduct } from '../../actions';
+import RichTextEditor from './RichTextEditor'; // Import Custom Editor
+import TitleInput from './TitleInput';         // Import Custom Input
 
 export default async function DashboardProducts() {
   const products = await prisma.product.findMany({ orderBy: { id: 'desc' } });
@@ -11,36 +13,37 @@ export default async function DashboardProducts() {
       {/* ADD PRODUCT FORM */}
       <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200 mb-10">
         <h2 className="font-bold text-lg mb-4 text-blue-600">Add Digital Product</h2>
-        <form action={addProduct} className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <form action={addProduct} className="grid grid-cols-1 md:grid-cols-2 gap-6">
           
           <div className="md:col-span-2">
-            <label className="text-xs font-bold uppercase text-gray-500">Product Title</label>
-            <input name="title" className="w-full p-3 border rounded" required />
+            {/* NEW TITLE INPUT WITH COUNT */}
+            <TitleInput name="title" label="Product Title" required />
           </div>
 
           <div>
-             <label className="text-xs font-bold uppercase text-gray-500">Price ($)</label>
+             <label className="text-xs font-bold uppercase text-gray-500 mb-1 block">Price ($)</label>
              <input name="price" type="number" step="0.01" className="w-full p-3 border rounded" required />
           </div>
           
           <div>
-             <label className="text-xs font-bold uppercase text-gray-500">Demo Link (Optional)</label>
+             <label className="text-xs font-bold uppercase text-gray-500 mb-1 block">Demo Link (Optional)</label>
              <input name="demoLink" className="w-full p-3 border rounded" />
           </div>
 
           <div className="md:col-span-2">
-            <label className="text-xs font-bold uppercase text-gray-500">Description (SEO)</label>
-            <textarea name="description" className="w-full p-3 border rounded h-24" required />
+            {/* NEW WYSIWYG EDITOR */}
+            <RichTextEditor name="description" label="Product Description" />
           </div>
 
           <div className="md:col-span-2">
-            <label className="text-xs font-bold uppercase text-gray-500">Features (List items)</label>
+            <label className="text-xs font-bold uppercase text-gray-500 mb-1 block">Features (SEO List)</label>
             <textarea name="features" className="w-full p-3 border rounded h-24" placeholder="e.g. 1 Year Support, Unlimited Sites..." />
+            <p className="text-xs text-gray-400 mt-1">Keep this as a simple list for the sidebar summary.</p>
           </div>
 
           <div className="md:col-span-2">
-            <label className="text-xs font-bold uppercase text-gray-500">Product Image</label>
-            <input type="file" name="imageFile" accept="image/*" className="w-full text-sm text-gray-500" />
+            <label className="text-xs font-bold uppercase text-gray-500 mb-1 block">Product Image</label>
+            <input type="file" name="imageFile" accept="image/*" className="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100" />
           </div>
 
           <button className="md:col-span-2 bg-blue-600 text-white py-3 rounded font-bold hover:bg-blue-700">

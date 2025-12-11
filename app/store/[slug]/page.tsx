@@ -74,10 +74,17 @@ export default async function ProductPage({ params }: Props) {
           </div>
           
           <div className="prose prose-invert text-gray-300 mb-10 text-lg leading-relaxed">
-            <p>{product.description}</p>
-            
-            {product.features && (
-              <div className="mt-6 p-6 bg-white/5 rounded-xl border border-white/5 text-sm">
+  
+  {/* OLD WAY: <p>{product.description}</p> */}
+  
+  {/* NEW WAY: Render HTML safely */}
+  <div 
+    dangerouslySetInnerHTML={{ __html: product.description }} 
+    className="rich-text-content"
+  />
+
+  {product.features && (
+    <div className="mt-6 p-6 bg-white/5 rounded-xl border border-white/5 text-sm">
                 <strong className="block text-white mb-2 text-base">What's included:</strong>
                 <div className="whitespace-pre-wrap text-gray-400">
                   {product.features}

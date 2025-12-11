@@ -45,3 +45,10 @@ body {
   /* Run the animation we defined above */
   animation: gradient-flow 6s ease infinite;
 }
+/* Style for Rich Text content from Admin */
+.rich-text-content h2 { font-size: 1.5rem; font-weight: bold; margin-bottom: 0.5rem; color: white; }
+.rich-text-content h3 { font-size: 1.25rem; font-weight: bold; margin-bottom: 0.5rem; color: #ccc; }
+.rich-text-content p { margin-bottom: 1rem; }
+.rich-text-content ul { list-style-type: disc; padding-left: 1.5rem; margin-bottom: 1rem; }
+.rich-text-content ol { list-style-type: decimal; padding-left: 1.5rem; margin-bottom: 1rem; }
+.rich-text-content strong { color: #14a800; }
