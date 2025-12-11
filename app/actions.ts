@@ -4,6 +4,7 @@ import { prisma } from '@/lib/prisma';
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 import { revalidatePath } from 'next/cache';
+import { sendOrderEmails } from '@/lib/email'; 
 
 // --- HELPER: Redirect with Toast Message ---
 function successRedirect(path: string, message: string) {
@@ -280,6 +281,27 @@ export async function placeOrder(orderData: any) {
       status: orderData.total === 0 ? 'Complete' : 'Processing'
     }
   });
+
+  // LOGIC: PayPal = Processing, Free = Pending
+  const status = orderData.isPaid ? 'Processing' : 'Pending';
+
+  const newOrder = await prisma.order.create({
+    data: {
+      customerName: orderData.name,
+      email: orderData.email,
+      total: orderData.total,
+      items: JSON.stringify(orderData.items),
+      couponCode: orderData.couponCode || null,
+      status: status
+    }
+  });
+
+  // Send Emails
+  try {
+    await sendOrderEmails(newOrder, orderData.items);
+  } catch (error) {
+    console.error("Failed to send email:", error);
+  }
 }
 
 export async function updateOrderStatus(formData: FormData) {
