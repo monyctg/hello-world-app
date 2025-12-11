@@ -4,13 +4,14 @@ import { useState } from 'react';
 export default function TitleInput({ name, label, required = false }: { name: string, label: string, required?: boolean }) {
   const [value, setValue] = useState('');
 
-  const wordCount = value.trim().split(/\s+/).filter(w => w !== '').length;
+  // CHANGED: Simply use .length for characters
+  const charCount = value.length;
 
   return (
     <div>
       <div className="flex justify-between items-center mb-1">
         <label className="text-xs font-bold uppercase text-gray-500">{label}</label>
-        <span className="text-xs text-gray-400">{wordCount} words</span>
+        <span className="text-xs text-gray-400">{charCount} chars</span>
       </div>
       <input 
         name={name} 
