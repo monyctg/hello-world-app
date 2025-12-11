@@ -317,3 +317,61 @@ export async function customerLogin(formData: FormData) {
 
   // Login successful
 }
+
+// --- COUPONS ---
+export async function addCoupon(formData: FormData) {
+  const cookieStore = await cookies();
+  if (!cookieStore.has('admin_session')) throw new Error('Unauthorized');
+
+  await prisma.coupon.create({
+    data: {
+      code: formData.get('code') as string,
+      discount: parseInt(formData.get('discount') as string),
+    }
+  });
+  revalidatePath('/dashboard/coupons');
+}
+
+export async function deleteCoupon(formData: FormData) {
+  const cookieStore = await cookies();
+  if (!cookieStore.has('admin_session')) throw new Error('Unauthorized');
+  
+  await prisma.coupon.delete({ where: { id: parseInt(formData.get('id') as string) } });
+  revalidatePath('/dashboard/coupons');
+}
+
+// Check if coupon is valid (Call this from Client Component)
+export async function verifyCoupon(code: string) {
+  const coupon = await prisma.coupon.findUnique({ where: { code } });
+  if (!coupon || !coupon.isActive) return null;
+  return coupon.discount;
+}
+
+// --- ORDERS ---
+export async function updateOrderStatus(formData: FormData) {
+  const cookieStore = await cookies();
+  if (!cookieStore.has('admin_session')) throw new Error('Unauthorized');
+
+  const id = parseInt(formData.get('id') as string);
+  const status = formData.get('status') as string;
+
+  await prisma.order.update({
+    where: { id },
+    data: { status }
+  });
+  revalidatePath('/dashboard/orders');
+}
+
+export async function placeOrder(orderData: any) {
+  // Updated to include items and coupon
+  await prisma.order.create({
+    data: {
+      customerName: orderData.name,
+      email: orderData.email,
+      total: orderData.total,
+      items: JSON.stringify(orderData.items), // Save cart items
+      couponCode: orderData.couponCode || null,
+      status: orderData.total === 0 ? 'Complete' : 'Processing' // Auto-complete free orders
+    }
+  });
+}

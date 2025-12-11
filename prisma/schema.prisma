@@ -64,12 +64,21 @@ model Product {
 }
 
 model Order {
-  id          Int      @id @default(autoincrement())
+  id           Int      @id @default(autoincrement())
   customerName String
-  email       String
-  total       Decimal
-  status      String   @default("pending")
-  createdAt   DateTime @default(now())
+  email        String
+  total        Decimal  @db.Decimal(10, 2)
+  status       String   @default("Pending") // Pending, Processing, Complete, Cancelled, Refunded
+  items        String?  // JSON string of what they bought (Title, Price, License)
+  couponCode   String?
+  createdAt    DateTime @default(now())
+}
+
+model Coupon {
+  id        Int      @id @default(autoincrement())
+  code      String   @unique
+  discount  Int      // Percentage discount (e.g. 10 for 10%)
+  isActive  Boolean  @default(true)
 }
 
 // NEW: For Customers who signup on the popup
