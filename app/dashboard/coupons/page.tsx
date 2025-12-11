@@ -8,7 +8,7 @@ export default async function DashboardCoupons() {
     <div className="max-w-5xl mx-auto p-4 md:p-8 pb-24 text-gray-800">
       <h1 className="text-3xl font-bold mb-8">Coupon Manager</h1>
 
-      {/* Add Coupon  */}
+      {/* Add Coupon */}
       <div className="bg-white p-6 rounded-xl shadow-sm border mb-8">
         <h2 className="font-bold text-lg mb-4 text-purple-600">Create New Coupon</h2>
         <form action={addCoupon} className="flex gap-4">
