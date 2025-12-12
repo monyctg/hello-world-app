@@ -1,22 +1,24 @@
 import nodemailer from 'nodemailer';
 
 const transporter = nodemailer.createTransport({
-  host: process.env.SMTP_HOST || 'smtp-relay.brevo.com',
-  port: 587,
+  host: process.env.SMTP_HOST || 'mail.smtp2go.com',
+  port: Number(process.env.SMTP_PORT) || 2525,
   secure: false, // true for 465, false for other ports
   auth: {
-    user: process.env.SMTP_USER, // Must be admin@hiseotools.com
-    pass: process.env.SMTP_PASS, // Your NEW generated key
+    user: process.env.SMTP_USER,
+    pass: process.env.SMTP_PASS,
   },
 });
 
 export async function sendOrderEmails(order: any, items: any[]) {
   const adminEmail = process.env.ADMIN_EMAIL || 'monyctg@gmail.com';
   
-  // IMPORTANT: This must match your Brevo login email
-  const senderEmail = process.env.SMTP_USER || 'admin@hiseotools.com'; 
+  // MUST be a verified sender in SMTP2GO
+  // If you verified 'admin@hiseotools.com', use that.
+  // If you verified 'monyctg@gmail.com', use that.
+  const senderEmail = 'monyctg@gmail.com'; 
 
-  // 1. Email Content for Customer
+  // 1. Customer Email
   const customerHtml = `
     <div style="font-family: Arial, sans-serif; padding: 20px; color: #333;">
       <h1 style="color: #14a800;">Order Received</h1>
@@ -37,7 +39,7 @@ export async function sendOrderEmails(order: any, items: any[]) {
     </div>
   `;
 
-  // 2. Email Content for Admin
+  // 2. Admin Email
   const adminHtml = `
     <div style="font-family: Arial, sans-serif; padding: 20px;">
       <h1 style="color: #d32f2f;">New Order Alert!</h1>
@@ -71,7 +73,7 @@ export async function sendOrderEmails(order: any, items: any[]) {
       subject: `New Order #${order.id} - ${order.status}`,
       html: adminHtml,
     });
-    console.log("Emails sent successfully");
+    console.log("Emails sent successfully via SMTP2GO");
   } catch (error) {
     console.error("Email Error:", error);
   }
