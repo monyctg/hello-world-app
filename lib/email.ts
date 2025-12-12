@@ -16,7 +16,7 @@ export async function sendOrderEmails(order: any, items: any[]) {
   // MUST be a verified sender in SMTP2GO
   // If you verified 'admin@hiseotools.com', use that.
   // If you verified 'monyctg@gmail.com', use that.
-  const senderEmail = 'monyctg@gmail.com'; 
+  const senderEmail = 'im@magfar.com'; 
 
   // 1. Customer Email
   const customerHtml = `
