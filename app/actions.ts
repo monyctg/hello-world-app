@@ -339,7 +339,7 @@ export async function sendTestEmail(formData: FormData) {
     console.log("SMTP Connection Successful!");
 
     // Use a sender you VERIFIED in SMTP2GO
-    const sender = 'admin@hiseotools.com'; 
+    const sender = 'im@magfar.com'; 
 
     const info = await transporter.sendMail({
       from: `"Test Bot" <${sender}>`,
